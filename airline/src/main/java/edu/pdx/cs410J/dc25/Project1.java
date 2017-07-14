@@ -15,19 +15,25 @@ public class Project1 {
     String arrive;
 
     if (args.length < 8) {
-      System.err.println("Missing command line arguments.  Make sure there are exactly 8 when running the program");
+      System.err.println("Missing command line arguments.  " +
+              "Make sure there are exactly 8 (in addition to options) when running the program");
       for (String arg : args) {
         System.out.println(arg);
       }
       System.exit(1);
     }
 
-    if (args.length > 8) {
-      System.err.println("Too many command line arguments.  Make sure there are exactly 8 when running the program");
+    if (args.length > 10) {
+      System.err.println("Too many command line arguments.  " +
+              "Make sure there are exactly 8 (in addition to options) when running the program");
       for (String arg : args) {
         System.out.println(arg);
       }
       System.exit(1);
+    }
+
+    if (args[0].equals("-README") || (args[1].equals("-README"))) {
+      readme();
     }
 
     flightNumber = verifyFlightNumberIsInteger(args);
@@ -170,5 +176,33 @@ public class Project1 {
     }
 
     return flightNumber;
+  }
+
+  private static void readme() {
+    System.out.println("This program creates an airline flight via data passed in from the user on the command line.");
+    System.out.println("This can be a flight that has already happened or will happen in the future.");
+    System.out.println("The flight data will not be stored after the program terminates.");
+    System.out.println("All data must be entered correctly in the correct position of the command line " +
+            "or the program will not work.");
+    System.out.println("The user will be given an error message if data has been incorrectly entered.");
+    System.out.println();
+    System.out.println("The command line interface must be as follows (options without [] and arguments without <>):");
+    System.out.println("java edu.pdx.cs410J.dc25.Project1 [options] <args>");
+    System.out.println("Arguments are (in this order):");
+    System.out.println("name            Name of the airline");
+    System.out.println("flightNumber    The flight number");
+    System.out.println("src             Three letter code of departure airport");
+    System.out.println("departDate      Departure date of flight (in MM/DD/YYYY)");
+    System.out.println("departTime      Departure time of flight (in HH:MM, 24 hour time)");
+    System.out.println("dest            Three letter code of arrival airport");
+    System.out.println("arriveDate      Arrival date of the flight (in MM/DD/YYYY");
+    System.out.println("arriveTime      Arrival time of the flight (in HH:MM, 24 hour time)");
+    System.out.println("The options are (and may appear in any order)");
+    System.out.println("-print          Prints the new flight data back to the user");
+    System.out.println("-README         Prints a README for the project and exits the program");
+    System.out.println("OPTIONS ARE CASE SENSITIVE");
+    System.out.println();
+    System.out.println("Dan Corcoran  Project 1");
+    System.exit(0);
   }
 }

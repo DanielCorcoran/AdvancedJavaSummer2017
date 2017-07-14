@@ -39,7 +39,8 @@ public class Project1IT extends InvokeMainTestCase {
   @Test
   public void tooManyCommandLineArguments() {
     MainMethodResult result =
-            invokeMain("arg1", "arg2", "arg3", "arg4", "arg5", "arg6", "1/1/1111", "00:00", "arg too many!");
+            invokeMain("-print", "-otheroption", "arg1", "arg2", "arg3", "arg4",
+                    "arg5", "arg6", "1/1/1111", "00:00", "arg too many!");
     assertThat(result.getExitCode(), equalTo(1));
     assertThat(result.getTextWrittenToStandardError(), containsString("Too many command line arguments."));
   }
@@ -229,5 +230,19 @@ public class Project1IT extends InvokeMainTestCase {
     assertThat(result.getExitCode(), equalTo(6));
     assertThat(result.getTextWrittenToStandardError(),
             containsString("Airport code must be 3 letters"));
+  }
+
+  @Test
+  public void readmeIsFirstArgument() {
+    MainMethodResult result =
+            invokeMain("-README", "arg1", "0", "3al", "11/11/1111", "00:00", "arg", "1/1/1111", "00:00");
+    assertThat(result.getExitCode(), equalTo(0));
+  }
+
+  @Test
+  public void readmeIsSecondArgument() {
+    MainMethodResult result =
+            invokeMain("-print", "-README", "arg1", "0", "3al", "11/11/1111", "00:00", "arg", "1/1/1111", "00:00");
+    assertThat(result.getExitCode(), equalTo(0));
   }
 }
