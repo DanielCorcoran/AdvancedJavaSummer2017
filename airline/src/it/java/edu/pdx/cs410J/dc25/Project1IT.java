@@ -190,7 +190,7 @@ public class Project1IT extends InvokeMainTestCase {
   @Test
   public void minutesAreGreaterThan2DigitsLong() {
     MainMethodResult result =
-            invokeMain("arg1", "0", "arg3", "11/11/1111", "0:000", "arg6", "1/1/1111", "00:00");
+            invokeMain("arg1", "0", "arg", "11/11/1111", "0:000", "arg", "1/1/1111", "00:00");
     assertThat(result.getExitCode(), equalTo(5));
     assertThat(result.getTextWrittenToStandardError(),
             containsString("Time not in the correct HH:MM format"));
