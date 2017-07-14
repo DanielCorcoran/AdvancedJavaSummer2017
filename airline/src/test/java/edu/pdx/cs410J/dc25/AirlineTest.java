@@ -39,5 +39,4 @@ public class AirlineTest {
     testCollection.add(flight1);
     assertThat(airline.getFlights(), is(testCollection));
   }
-
 }

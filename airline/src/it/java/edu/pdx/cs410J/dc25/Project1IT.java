@@ -48,7 +48,7 @@ public class Project1IT extends InvokeMainTestCase {
   public void flightNumberIsNotAnInteger() {
     MainMethodResult result =
             invokeMain("arg1", "arg2", "arg3", "arg4", "arg5", "arg6", "arg7", "arg8");
-    assertThat(result.getExitCode(), equalTo(1));
+    assertThat(result.getExitCode(), equalTo(2));
     assertThat(result.getTextWrittenToStandardError(),
             containsString("Flight number (second argument) must contain only numbers"));
   }
@@ -56,8 +56,8 @@ public class Project1IT extends InvokeMainTestCase {
   @Test
   public void tooManyNumbersInMonthOfDate() {
     MainMethodResult result =
-            invokeMain("arg1", "0", "arg3", "111/1/1111", "arg5", "arg6", "arg7", "arg8");
-    assertThat(result.getExitCode(), equalTo(1));
+            invokeMain("arg1", "0", "arg3", "1111", "arg5", "arg6", "arg7", "arg8");
+    assertThat(result.getExitCode(), equalTo(4));
     assertThat(result.getTextWrittenToStandardError(),
             containsString("Date not in the correct MM/DD/YYYY format"));
   }
@@ -65,8 +65,8 @@ public class Project1IT extends InvokeMainTestCase {
   @Test
   public void noNumbersInMonthOfDate() {
     MainMethodResult result =
-            invokeMain("arg1", "0", "arg3", "/1/1111", "arg5", "arg6", "arg7", "arg8");
-    assertThat(result.getExitCode(), equalTo(1));
+            invokeMain("arg1", "0", "arg3", "/11/1111", "arg5", "arg6", "arg7", "arg8");
+    assertThat(result.getExitCode(), equalTo(4));
     assertThat(result.getTextWrittenToStandardError(),
             containsString("Date not in the correct MM/DD/YYYY format"));
   }
@@ -75,7 +75,7 @@ public class Project1IT extends InvokeMainTestCase {
   public void noNumbersInDayOfDate() {
     MainMethodResult result =
             invokeMain("arg1", "0", "arg3", "10//1111", "arg5", "arg6", "arg7", "arg8");
-    assertThat(result.getExitCode(), equalTo(1));
+    assertThat(result.getExitCode(), equalTo(4));
     assertThat(result.getTextWrittenToStandardError(),
             containsString("Date not in the correct MM/DD/YYYY format"));
   }
@@ -83,8 +83,8 @@ public class Project1IT extends InvokeMainTestCase {
   @Test
   public void tooManyNumbersInDayOfDate() {
     MainMethodResult result =
-            invokeMain("arg1", "0", "arg3", "11/111/1111", "arg5", "arg6", "arg7", "arg8");
-    assertThat(result.getExitCode(), equalTo(1));
+            invokeMain("arg1", "0", "arg3", "11/111", "arg5", "arg6", "arg7", "arg8");
+    assertThat(result.getExitCode(), equalTo(4));
     assertThat(result.getTextWrittenToStandardError(),
             containsString("Date not in the correct MM/DD/YYYY format"));
   }
@@ -93,7 +93,16 @@ public class Project1IT extends InvokeMainTestCase {
   public void notEnoughNumbersInYearOfDate() {
     MainMethodResult result =
             invokeMain("arg1", "0", "arg3", "11/11/1", "arg5", "arg6", "arg7", "arg8");
-    assertThat(result.getExitCode(), equalTo(1));
+    assertThat(result.getExitCode(), equalTo(4));
+    assertThat(result.getTextWrittenToStandardError(),
+            containsString("Date not in the correct MM/DD/YYYY format"));
+  }
+
+  @Test
+  public void tooManyNumbersInYearOfDate() {
+    MainMethodResult result =
+            invokeMain("arg1", "0", "arg3", "11/11/11111", "arg5", "arg6", "arg7", "arg8");
+    assertThat(result.getExitCode(), equalTo(4));
     assertThat(result.getTextWrittenToStandardError(),
             containsString("Date not in the correct MM/DD/YYYY format"));
   }
@@ -102,9 +111,15 @@ public class Project1IT extends InvokeMainTestCase {
   public void checkToSeeIfThereAreAtLeast4CharsInDate() {
     MainMethodResult result =
             invokeMain("arg1", "0", "arg3", "1/1", "arg5", "arg6", "arg7", "arg8");
-    assertThat(result.getExitCode(), equalTo(1));
+    assertThat(result.getExitCode(), equalTo(3));
     assertThat(result.getTextWrittenToStandardError(),
             containsString("Date not in the correct MM/DD/YYYY format"));
   }
 
+  @Test
+  public void dateHappyPath() {
+    MainMethodResult result =
+            invokeMain("arg1", "0", "arg3", "11/11/1111", "arg5", "arg6", "arg7", "arg8");
+    assertThat(result.getExitCode(), equalTo(null));
+  }
 }

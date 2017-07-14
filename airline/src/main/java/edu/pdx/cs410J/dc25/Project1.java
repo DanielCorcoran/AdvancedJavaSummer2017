@@ -18,9 +18,6 @@ public class Project1 {
     String destination;
     String arriveDate;
     String arriveTime;
-    int digitsInMonth;
-    int digitsInDay;
-    int yearStartingPosition;
 
     if (args.length < 8) {
       System.err.println("Missing command line arguments.  Make sure there are exactly 8 when running the program");
@@ -40,30 +37,12 @@ public class Project1 {
 
     flightNumber = verifyFlightNumberIsInteger(args);
 
-    if (args[3].length() < 4) {
+    isDateLengthLegal(args[3]);
+
+    if (!verifyDateFormat(args, 3)) {
       System.err.println("Date not in the correct MM/DD/YYYY format");
-      System.exit(1);
+      System.exit(4);
     }
-
-    digitsInMonth = numberOfDigitsInMonth(args, 3);
-    if (digitsInMonth != 1 && digitsInMonth != 2) {
-      System.err.println("Date not in the correct MM/DD/YYYY format");
-      System.exit(1);
-    }
-
-    digitsInDay = numberOfDigitsInDay(args, 3, digitsInMonth);
-    if (digitsInDay != 1 && digitsInDay != 2) {
-      System.err.println("Date not in the correct MM/DD/YYYY format");
-      System.exit(1);
-    }
-
-    yearStartingPosition = digitsInMonth + digitsInDay + 2;
-    if (!checkCorrectDateFormat(args, 3, yearStartingPosition)) {
-      System.err.println("Date not in the correct MM/DD/YYYY format");
-      System.exit(1);
-    }
-
-
 
     airlineName = args[0];
     source = args[2];
@@ -75,62 +54,78 @@ public class Project1 {
 
   }
 
-  private static boolean checkIfCharAtPositionIsANumber(String arg, int position) {
-    return arg.charAt(position) >= '0' && arg.charAt(position) <= '9';
+  private static void isDateLengthLegal(String arg) {
+    if (arg.length() < 4 || arg.length() > 10) {
+      System.err.println("Date not in the correct MM/DD/YYYY format");
+      System.exit(3);
+    }
   }
 
   private static int numberOfDigitsInMonth(String[] args, int argNumber) {
-    int digitsInMonth = 0;
-
-    if ((checkIfCharAtPositionIsANumber(args[argNumber], 0)) &&
-            args[argNumber].charAt(1) == '/') {
-      digitsInMonth = 1;
-    }
-
-    if (checkIfCharAtPositionIsANumber(args[argNumber],0) &&
-            checkIfCharAtPositionIsANumber(args[argNumber], 1)&&
+    if (Character.isDigit(args[argNumber].charAt(0)) && args[argNumber].charAt(1) == '/') {
+      return 1;
+    } else if (Character.isDigit(args[argNumber].charAt(0)) && Character.isDigit(args[argNumber].charAt(1)) &&
             args[argNumber].charAt(2) == '/') {
-      digitsInMonth = 2;
+      return 2;
+    } else {
+      return 0;
     }
-
-    return digitsInMonth;
   }
 
   private static int numberOfDigitsInDay(String[] args, int argNumber, int digitsInMonth) {
-    int digitsInDay = 0;
-
-    if ((checkIfCharAtPositionIsANumber(args[argNumber], digitsInMonth + 1)) &&
+    if (Character.isDigit(args[argNumber].charAt(digitsInMonth + 1)) &&
             args[argNumber].charAt(digitsInMonth + 2) == '/') {
-      digitsInDay = 1;
-    }
-
-    if (checkIfCharAtPositionIsANumber(args[argNumber],digitsInMonth + 1) &&
-            checkIfCharAtPositionIsANumber(args[argNumber], digitsInMonth + 2)&&
+      return 1;
+    } else if (Character.isDigit(args[argNumber].charAt(digitsInMonth + 1)) &&
+            Character.isDigit(args[argNumber].charAt(digitsInMonth + 2)) &&
             args[argNumber].charAt(digitsInMonth + 3) == '/') {
-      digitsInDay = 2;
+      return 2;
+    } else {
+      return 0;
     }
-
-    return digitsInDay;
   }
 
-  private static boolean checkCorrectDateFormat(String[] args, int argNumber, int yearStartingPosition) {
-    return args[argNumber].length() == yearStartingPosition + 3 &&
-            checkIfCharAtPositionIsANumber(args[argNumber], yearStartingPosition) &&
-            checkIfCharAtPositionIsANumber(args[argNumber], yearStartingPosition + 1) &&
-            checkIfCharAtPositionIsANumber(args[argNumber], yearStartingPosition + 2) &&
-            checkIfCharAtPositionIsANumber(args[argNumber], yearStartingPosition + 3);
+  private static boolean checkYearFormat(String[] args, int argNumber, int yearStartingPosition) {
+    boolean yearIsAllNumbers = true;
+
+    for(int i = yearStartingPosition; i < args[argNumber].length(); ++i) {
+      if (!Character.isDigit(args[argNumber].charAt(i))) {
+        yearIsAllNumbers = false;
+      }
+    }
+
+    return ((args[argNumber].length() == yearStartingPosition + 4) && yearIsAllNumbers);
+  }
+
+  private static boolean verifyDateFormat(String[] args, int argNumber) {
+    int digitsInMonth;
+    int digitsInDay;
+    int yearStartingPosition;
+
+    digitsInMonth = numberOfDigitsInMonth(args, argNumber);
+    if (digitsInMonth == 0) {
+      return false;
+    }
+
+    digitsInDay = numberOfDigitsInDay(args, argNumber, digitsInMonth);
+    if (digitsInDay == 0) {
+      return false;
+    }
+
+    yearStartingPosition = digitsInMonth + digitsInDay + 2;
+    return checkYearFormat(args, argNumber, yearStartingPosition);
   }
 
   private static int verifyFlightNumberIsInteger(String[] args) {
     int flightNumber = 0;
+
     try {
       flightNumber = Integer.parseInt(args[1]);
     } catch (NumberFormatException e) {
       System.err.println("Flight number (second argument) must contain only numbers");
-      System.exit(1);
+      System.exit(2);
     }
 
     return flightNumber;
   }
-
 }
