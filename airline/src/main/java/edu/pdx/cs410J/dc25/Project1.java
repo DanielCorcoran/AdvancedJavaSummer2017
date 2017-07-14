@@ -10,14 +10,9 @@ public class Project1 {
   public static void main(String[] args) {
     //Class c = AbstractAirline.class;  // Refer to one of Dave's classes so that we can be sure it is on the classpath
 
-    String airlineName;
     int flightNumber;
-    String source;
-    String departDate;
-    String departTime;
-    String destination;
-    String arriveDate;
-    String arriveTime;
+    String depart;
+    String arrive;
 
     if (args.length < 8) {
       System.err.println("Missing command line arguments.  Make sure there are exactly 8 when running the program");
@@ -38,27 +33,38 @@ public class Project1 {
     flightNumber = verifyFlightNumberIsInteger(args);
 
     isDateLengthLegal(args[3]);
+    isDateLengthLegal(args[6]);
 
-    if (!verifyDateFormat(args, 3)) {
+    if (!verifyDateFormat(args, 3) || !verifyDateFormat(args, 6)) {
       System.err.println("Date not in the correct MM/DD/YYYY format");
       System.exit(4);
     }
 
     isTimeLengthLegal(args[4]);
+    isTimeLengthLegal(args[7]);
 
-    if (!verifyTimeFormat(args, 4)) {
+    if (!verifyTimeFormat(args, 4) || !verifyTimeFormat(args, 7)) {
       System.err.println("Time not in the correct HH:MM format");
       System.exit(5);
     }
 
-    airlineName = args[0];
-    source = args[2];
-    departDate = args[3];
-    departTime = args[4];
-    destination = args[5];
-    arriveDate = args[6];
-    arriveTime = args[7];
+    isAirportCodeLegal(args, 2);
+    isAirportCodeLegal(args, 5);
 
+    depart = args[3] + " " + args[4];
+    arrive = args[6] + " " + args[7];
+
+    Airline airline = new Airline(args[0]);
+    Flight flight = new Flight(flightNumber, args[2], depart, args[5], arrive);
+    airline.addFlight(flight);
+  }
+
+  private static void isAirportCodeLegal(String[] args, int argNumber) {
+    if (!(args[argNumber].length() == 3 && (Character.isLetter(args[2].charAt(0)) &&
+            Character.isLetter(args[2].charAt(1)) && Character.isLetter(args[2].charAt(2))))) {
+      System.err.println("Airport code must be 3 letters");
+      System.exit(6);
+    }
   }
 
   private static void isTimeLengthLegal(String arg) {
