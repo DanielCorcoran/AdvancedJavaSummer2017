@@ -57,7 +57,7 @@ public class Project1IT extends InvokeMainTestCase {
   @Test
   public void tooManyNumbersInMonthOfDate() {
     MainMethodResult result =
-            invokeMain("arg1", "0", "arg3", "1111", "arg5", "arg6", "1/1/1111", "00:00");
+            invokeMain("arg1", "0", "arg3", "1111//1111", "arg5", "arg6", "1/1/1111", "00:00");
     assertThat(result.getExitCode(), equalTo(4));
     assertThat(result.getTextWrittenToStandardError(),
             containsString("Date not in the correct MM/DD/YYYY format"));
@@ -84,7 +84,7 @@ public class Project1IT extends InvokeMainTestCase {
   @Test
   public void tooManyNumbersInDayOfDate() {
     MainMethodResult result =
-            invokeMain("arg1", "0", "arg3", "11/111", "arg5", "arg6", "1/1/1111", "00:00");
+            invokeMain("arg1", "0", "arg3", "11/111/111", "arg5", "arg6", "1/1/1111", "00:00");
     assertThat(result.getExitCode(), equalTo(4));
     assertThat(result.getTextWrittenToStandardError(),
             containsString("Date not in the correct MM/DD/YYYY format"));
@@ -93,7 +93,7 @@ public class Project1IT extends InvokeMainTestCase {
   @Test
   public void notEnoughNumbersInYearOfDate() {
     MainMethodResult result =
-            invokeMain("arg1", "0", "arg3", "11/11/1", "arg5", "arg6", "1/1/1111", "00:00");
+            invokeMain("arg1", "0", "arg3", "11/11/111", "arg5", "arg6", "1/1/1111", "00:00");
     assertThat(result.getExitCode(), equalTo(4));
     assertThat(result.getTextWrittenToStandardError(),
             containsString("Date not in the correct MM/DD/YYYY format"));
@@ -243,6 +243,20 @@ public class Project1IT extends InvokeMainTestCase {
   public void readmeIsSecondArgument() {
     MainMethodResult result =
             invokeMain("-print", "-README", "arg1", "0", "3al", "11/11/1111", "00:00", "arg", "1/1/1111", "00:00");
+    assertThat(result.getExitCode(), equalTo(0));
+  }
+
+  @Test
+  public void printIsFirstArgument() {
+    MainMethodResult result =
+            invokeMain("-print", "arg1", "0", "aal", "11/11/1111", "00:00", "arg", "1/1/1111", "00:00");
+    assertThat(result.getExitCode(), equalTo(0));
+  }
+
+  @Test
+  public void printIsSecondArgument() {
+    MainMethodResult result =
+            invokeMain("-option", "-print", "arg1", "0", "aal", "11/11/1111", "00:00", "arg", "1/1/1111", "00:00");
     assertThat(result.getExitCode(), equalTo(0));
   }
 }

@@ -10,9 +10,11 @@ public class Project1 {
   public static void main(String[] args) {
     //Class c = AbstractAirline.class;  // Refer to one of Dave's classes so that we can be sure it is on the classpath
 
+    int argOffset = 0;
     int flightNumber;
     String depart;
     String arrive;
+    boolean toPrint = false;
 
     if (args.length < 8) {
       System.err.println("Missing command line arguments.  " +
@@ -36,38 +38,55 @@ public class Project1 {
       readme();
     }
 
-    flightNumber = verifyFlightNumberIsInteger(args);
+    if (args[0].equals("-print") || args[1].equals("-print")) {
+      toPrint = true;
+    }
 
-    isDateLengthLegal(args[3]);
-    isDateLengthLegal(args[6]);
+    if (args[0].startsWith("-")) {
+      if (args[1].startsWith("-")) {
+        argOffset = 2;
+      } else {
+        argOffset = 1;
+      }
+    }
 
-    if (!verifyDateFormat(args, 3) || !verifyDateFormat(args, 6)) {
+    flightNumber = verifyFlightNumberIsInteger(args, 1 + argOffset);
+
+    isDateLengthLegal(args[3 + argOffset]);
+    isDateLengthLegal(args[6 + argOffset]);
+
+    if (!verifyDateFormat(args, 3 + argOffset) || !verifyDateFormat(args, 6 + argOffset)) {
       System.err.println("Date not in the correct MM/DD/YYYY format");
       System.exit(4);
     }
 
-    isTimeLengthLegal(args[4]);
-    isTimeLengthLegal(args[7]);
+    isTimeLengthLegal(args[4 + argOffset]);
+    isTimeLengthLegal(args[7 + argOffset]);
 
-    if (!verifyTimeFormat(args, 4) || !verifyTimeFormat(args, 7)) {
+    if (!verifyTimeFormat(args, 4 + argOffset) || !verifyTimeFormat(args, 7 + argOffset)) {
       System.err.println("Time not in the correct HH:MM format");
       System.exit(5);
     }
 
-    isAirportCodeLegal(args, 2);
-    isAirportCodeLegal(args, 5);
+    isAirportCodeLegal(args, 2 + argOffset);
+    isAirportCodeLegal(args, 5 + argOffset);
 
-    depart = args[3] + " " + args[4];
-    arrive = args[6] + " " + args[7];
+    depart = args[3 + argOffset] + " " + args[4 + argOffset];
+    arrive = args[6 + argOffset] + " " + args[7 + argOffset];
 
-    Airline airline = new Airline(args[0]);
-    Flight flight = new Flight(flightNumber, args[2], depart, args[5], arrive);
+    Airline airline = new Airline(args[argOffset]);
+    Flight flight = new Flight(flightNumber, args[2 + argOffset], depart, args[5 + argOffset], arrive);
     airline.addFlight(flight);
+
+    if (toPrint) {
+      flight.toString();
+      System.exit(0);
+    }
   }
 
   private static void isAirportCodeLegal(String[] args, int argNumber) {
-    if (!(args[argNumber].length() == 3 && (Character.isLetter(args[2].charAt(0)) &&
-            Character.isLetter(args[2].charAt(1)) && Character.isLetter(args[2].charAt(2))))) {
+    if (!(args[argNumber].length() == 3 && (Character.isLetter(args[argNumber].charAt(0)) &&
+            Character.isLetter(args[argNumber].charAt(1)) && Character.isLetter(args[argNumber].charAt(2))))) {
       System.err.println("Airport code must be 3 letters");
       System.exit(6);
     }
@@ -81,7 +100,7 @@ public class Project1 {
   }
 
   private static void isDateLengthLegal(String arg) {
-    if (arg.length() < 4 || arg.length() > 10) {
+    if (arg.length() < 8 || arg.length() > 10) {
       System.err.println("Date not in the correct MM/DD/YYYY format");
       System.exit(3);
     }
@@ -165,11 +184,11 @@ public class Project1 {
     return digitsInHour != 0 && verifyNumberOfDigitsInMinutes(args, argNumber, digitsInHour);
   }
 
-  private static int verifyFlightNumberIsInteger(String[] args) {
+  private static int verifyFlightNumberIsInteger(String[] args, int argNumber) {
     int flightNumber = 0;
 
     try {
-      flightNumber = Integer.parseInt(args[1]);
+      flightNumber = Integer.parseInt(args[argNumber]);
     } catch (NumberFormatException e) {
       System.err.println("Flight number (second argument) must contain only numbers");
       System.exit(2);
