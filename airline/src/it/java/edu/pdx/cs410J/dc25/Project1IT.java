@@ -102,6 +102,33 @@ public class Project1IT extends InvokeMainTestCase {
   public void tooManyNumbersInYearOfDate() {
     MainMethodResult result =
             invokeMain("arg1", "0", "arg3", "11/11/11111", "arg5", "arg6", "arg7", "arg8");
+    assertThat(result.getExitCode(), equalTo(3));
+    assertThat(result.getTextWrittenToStandardError(),
+            containsString("Date not in the correct MM/DD/YYYY format"));
+  }
+
+  @Test
+  public void nonNumberInMonth() {
+    MainMethodResult result =
+            invokeMain("arg1", "0", "arg3", "1t/11/1111", "", "arg6", "arg7", "arg8");
+    assertThat(result.getExitCode(), equalTo(4));
+    assertThat(result.getTextWrittenToStandardError(),
+            containsString("Date not in the correct MM/DD/YYYY format"));
+  }
+
+  @Test
+  public void nonNumberInDay() {
+    MainMethodResult result =
+            invokeMain("arg1", "0", "arg3", "11/t1/1111", "", "arg6", "arg7", "arg8");
+    assertThat(result.getExitCode(), equalTo(4));
+    assertThat(result.getTextWrittenToStandardError(),
+            containsString("Date not in the correct MM/DD/YYYY format"));
+  }
+
+  @Test
+  public void nonNumberInYear() {
+    MainMethodResult result =
+            invokeMain("arg1", "0", "arg3", "11/11/t111", "", "arg6", "arg7", "arg8");
     assertThat(result.getExitCode(), equalTo(4));
     assertThat(result.getTextWrittenToStandardError(),
             containsString("Date not in the correct MM/DD/YYYY format"));
@@ -119,7 +146,52 @@ public class Project1IT extends InvokeMainTestCase {
   @Test
   public void dateHappyPath() {
     MainMethodResult result =
-            invokeMain("arg1", "0", "arg3", "11/11/1111", "arg5", "arg6", "arg7", "arg8");
+            invokeMain("arg1", "0", "arg3", "11/11/1111", "00:00", "arg6", "arg7", "arg8");
     assertThat(result.getExitCode(), equalTo(null));
+  }
+
+  @Test
+  public void timeStringIsEmpty() {
+    MainMethodResult result =
+            invokeMain("arg1", "0", "arg3", "11/11/1111", "", "arg6", "arg7", "arg8");
+    assertThat(result.getExitCode(), equalTo(5));
+    assertThat(result.getTextWrittenToStandardError(),
+            containsString("Time not in the correct HH:MM format"));
+  }
+
+  @Test
+  public void timeStringHasTooManyChars() {
+    MainMethodResult result =
+            invokeMain("arg1", "0", "arg3", "11/11/1111", "111111", "arg6", "arg7", "arg8");
+    assertThat(result.getExitCode(), equalTo(5));
+    assertThat(result.getTextWrittenToStandardError(),
+            containsString("Time not in the correct HH:MM format"));
+  }
+
+  @Test
+  public void hourIsLessThanOneDigitLong() {
+    MainMethodResult result =
+            invokeMain("arg1", "0", "arg3", "11/11/1111", ":0000", "arg6", "arg7", "arg8");
+    assertThat(result.getExitCode(), equalTo(5));
+    assertThat(result.getTextWrittenToStandardError(),
+            containsString("Time not in the correct HH:MM format"));
+  }
+
+  @Test
+  public void hourIsGreaterThan2DigitsLong() {
+    MainMethodResult result =
+            invokeMain("arg1", "0", "arg3", "11/11/1111", "000:0", "arg6", "arg7", "arg8");
+    assertThat(result.getExitCode(), equalTo(5));
+    assertThat(result.getTextWrittenToStandardError(),
+            containsString("Time not in the correct HH:MM format"));
+  }
+
+  @Test
+  public void minutesAreGreaterThan2DigitsLong() {
+    MainMethodResult result =
+            invokeMain("arg1", "0", "arg3", "11/11/1111", "0:000", "arg6", "arg7", "arg8");
+    assertThat(result.getExitCode(), equalTo(5));
+    assertThat(result.getTextWrittenToStandardError(),
+            containsString("Time not in the correct HH:MM format"));
   }
 }

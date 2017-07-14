@@ -44,6 +44,13 @@ public class Project1 {
       System.exit(4);
     }
 
+    isTimeLengthLegal(args[4]);
+
+    if (!verifyTimeFormat(args, 4)) {
+      System.err.println("Time not in the correct HH:MM format");
+      System.exit(5);
+    }
+
     airlineName = args[0];
     source = args[2];
     departDate = args[3];
@@ -52,6 +59,13 @@ public class Project1 {
     arriveDate = args[6];
     arriveTime = args[7];
 
+  }
+
+  private static void isTimeLengthLegal(String arg) {
+    if (arg.length() < 4 || arg.length() > 5) {
+      System.err.println("Time not in the correct HH:MM format");
+      System.exit(5);
+    }
   }
 
   private static void isDateLengthLegal(String arg) {
@@ -114,6 +128,29 @@ public class Project1 {
 
     yearStartingPosition = digitsInMonth + digitsInDay + 2;
     return checkYearFormat(args, argNumber, yearStartingPosition);
+  }
+
+  private static int numberOfDigitsInHour(String[] args, int argNumber) {
+    if (Character.isDigit(args[argNumber].charAt(0)) && args[argNumber].charAt(1) == '/') {
+      return 1;
+    } else if (Character.isDigit(args[argNumber].charAt(0)) && Character.isDigit(args[argNumber].charAt(1)) &&
+            args[argNumber].charAt(2) == ':') {
+      return 2;
+    } else {
+      return 0;
+    }
+  }
+
+  private static boolean verifyNumberOfDigitsInMinutes(String[] args, int argNumber, int digitsInHour) {
+    return Character.isDigit(args[argNumber].charAt(digitsInHour + 1)) &&
+            Character.isDigit(args[argNumber].charAt(digitsInHour + 2));
+  }
+
+  private static boolean verifyTimeFormat(String[] args, int argNumber) {
+    int digitsInHour;
+
+    digitsInHour = numberOfDigitsInHour(args, argNumber);
+    return digitsInHour != 0 && verifyNumberOfDigitsInMinutes(args, argNumber, digitsInHour);
   }
 
   private static int verifyFlightNumberIsInteger(String[] args) {
