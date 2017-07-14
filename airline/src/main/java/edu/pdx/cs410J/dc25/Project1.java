@@ -16,6 +16,10 @@ public class Project1 {
     String arrive;
     boolean toPrint = false;
 
+    if ((args.length >= 1 && args[0].equals("-README")) || (args.length >= 2 && args[1].equals("-README"))) {
+      readme();
+    }
+
     if (args.length < 8) {
       System.err.println("Missing command line arguments.  " +
               "Make sure there are exactly 8 (in addition to options) when running the program");
@@ -32,10 +36,6 @@ public class Project1 {
         System.out.println(arg);
       }
       System.exit(1);
-    }
-
-    if (args[0].equals("-README") || (args[1].equals("-README"))) {
-      readme();
     }
 
     if (args[0].equals("-print") || args[1].equals("-print")) {
@@ -79,7 +79,7 @@ public class Project1 {
     airline.addFlight(flight);
 
     if (toPrint) {
-      flight.toString();
+      System.out.println(flight.toString());
       System.exit(0);
     }
   }
@@ -190,7 +190,7 @@ public class Project1 {
     try {
       flightNumber = Integer.parseInt(args[argNumber]);
     } catch (NumberFormatException e) {
-      System.err.println("Flight number (second argument) must contain only numbers");
+      System.err.println("Flight number must contain only numbers");
       System.exit(2);
     }
 
@@ -208,7 +208,7 @@ public class Project1 {
     System.out.println("The command line interface must be as follows (options without [] and arguments without <>):");
     System.out.println("java edu.pdx.cs410J.dc25.Project1 [options] <args>");
     System.out.println("Arguments are (in this order):");
-    System.out.println("name            Name of the airline");
+    System.out.println("name            Name of the airline (if more than one word, must be surrounded by quotes)");
     System.out.println("flightNumber    The flight number");
     System.out.println("src             Three letter code of departure airport");
     System.out.println("departDate      Departure date of flight (in MM/DD/YYYY)");

@@ -51,7 +51,7 @@ public class Project1IT extends InvokeMainTestCase {
             invokeMain("arg1", "arg2", "arg3", "arg4", "arg5", "arg6", "1/1/1111", "00:00");
     assertThat(result.getExitCode(), equalTo(2));
     assertThat(result.getTextWrittenToStandardError(),
-            containsString("Flight number (second argument) must contain only numbers"));
+            containsString("Flight number must contain only numbers"));
   }
 
   @Test
