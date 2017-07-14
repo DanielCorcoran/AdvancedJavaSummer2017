@@ -5,7 +5,7 @@ package edu.pdx.cs410J.dc25;
  * validity and completeness, and uses them to create objects of the <code>Flight</code> and <code>Airline</code>
  * classes.
  */
-public class Project1 {
+public class Project2 {
 
   public static void main(String[] args) {
     int argOffset = 0;          //Variable to account for options when parsing arguments
@@ -306,7 +306,7 @@ public class Project1 {
     System.out.println("The user will be given an error message if data has been incorrectly entered.");
     System.out.println();
     System.out.println("The command line interface must be as follows (options without [] and arguments without <>):");
-    System.out.println("java edu.pdx.cs410J.dc25.Project1 [options] <args>");
+    System.out.println("java edu.pdx.cs410J.dc25.Project2 [options] <args>");
     System.out.println("Arguments are (in this order):");
     System.out.println("name            Name of the airline (if more than one word, must be surrounded by quotes)");
     System.out.println("flightNumber    The flight number");
