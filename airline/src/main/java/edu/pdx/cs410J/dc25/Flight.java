@@ -6,7 +6,7 @@ import edu.pdx.cs410J.AbstractFlight;
  * The <code>Flight</code> class extends the <code>AbstractFlight</code> class and implements the abstract methods
  * found there.
  * This class has unique flight data for each object instantiated that is tied to an airline in the
- * <code>Airline</code> class.
+ * {@link Airline} class.
  */
 public class Flight extends AbstractFlight {
   private int flightNumber;
@@ -38,7 +38,6 @@ public class Flight extends AbstractFlight {
   }
 
   /**
-   *
    * @return Flight number
    */
   @Override
@@ -47,7 +46,6 @@ public class Flight extends AbstractFlight {
   }
 
   /**
-   *
    * @return Departing airport code
    */
   @Override
@@ -56,7 +54,6 @@ public class Flight extends AbstractFlight {
   }
 
   /**
-   *
    * @return Time of departure
    */
   @Override
@@ -65,7 +62,6 @@ public class Flight extends AbstractFlight {
   }
 
   /**
-   *
    * @return Code of arrival airport
    */
   @Override
@@ -74,7 +70,6 @@ public class Flight extends AbstractFlight {
   }
 
   /**
-   *
    * @return Time of arrival
    */
   @Override

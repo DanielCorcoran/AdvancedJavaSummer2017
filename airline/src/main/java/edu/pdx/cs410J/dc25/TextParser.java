@@ -27,7 +27,7 @@ public class TextParser implements AirlineParser{
    *
    * @return Returns the {@link Airline} object
    * @throws ParserException
-   *         Exception thrown if file name is not valid or if the file is incorrectly formatted
+   *        Exception thrown if file name is not valid or if the file is incorrectly formatted
    */
   @Override
   public AbstractAirline parse() throws ParserException {

@@ -5,9 +5,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.MatcherAssert.assertThat;
-
 /**
  * Unit tests for the {@link TextParser} class.
  */
@@ -31,7 +28,7 @@ public class TextParserTest {
     thrown.expect(ParserException.class);
     thrown.expectMessage("File not correctly formatted");
 
-    String fileName = "test.txt";
+    String fileName = "emptytest.txt";
     TextParser parser = new TextParser(fileName);
     parser.parse();
   }
@@ -41,7 +38,7 @@ public class TextParserTest {
     thrown.expect(ParserException.class);
     thrown.expectMessage("File not correctly formatted");
 
-    String fileName = "test1.txt";
+    String fileName = "notenoughargs.txt";
     TextParser parser = new TextParser(fileName);
     parser.parse();
   }
@@ -51,7 +48,7 @@ public class TextParserTest {
     thrown.expect(ParserException.class);
     thrown.expectMessage("File not correctly formatted");
 
-    String fileName = "test.txt";
+    String fileName = "wrongnumberofargs.txt";
     TextParser parser = new TextParser(fileName);
     parser.parse();
   }
@@ -61,8 +58,17 @@ public class TextParserTest {
     thrown.expect(ParserException.class);
     thrown.expectMessage("File not correctly formatted");
 
-    String fileName = "test.txt";
+    String fileName = "flightnumbernotint.txt";
     TextParser parser = new TextParser(fileName);
     parser.parse();
   }
+
+  /*
+  @Test
+  public void testFileCreatedWithTextDumper() throws ParserException {
+    String fileName = "testwrite.txt";
+    TextParser parser = new TextParser(fileName);
+    System.out.println(parser.parse().getFlights());
+  }
+  */
 }
