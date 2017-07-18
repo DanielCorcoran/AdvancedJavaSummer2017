@@ -1,23 +1,53 @@
 package edu.pdx.cs410J.dc25;
 
 import edu.pdx.cs410J.InvokeMainTestCase;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.io.*;
+import java.util.stream.Stream;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 /**
  * An integration test for the {@link Project2} main class.
  */
 public class Project2IT extends InvokeMainTestCase {
 
-    /**
-     * Invokes the main method of {@link Project2} with the given arguments.
-     */
-    private MainMethodResult invokeMain(String... args) {
-        return invokeMain( Project2.class, args );
+  /**
+   * Invokes the main method of {@link Project2} with the given arguments.
+   */
+  private MainMethodResult invokeMain(String... args) {
+    return invokeMain( Project2.class, args );
+  }
+
+  private static File airlineFile;
+
+  @BeforeClass
+  public static void createTempDirectoryForAirlineFile() throws IOException {
+    File tmpDirectory = new File(System.getProperty("java.io.tmpdir"));
+    airlineFile = new File(tmpDirectory, "airline.txt");
+  }
+
+  @AfterClass
+  public static void deleteTempDirectoryForAirlineFile() {
+    if (airlineFile.exists()) {
+      assertTrue(airlineFile.delete());
     }
+  }
+
+  private String readFile(File file) throws FileNotFoundException {
+    BufferedReader br = new BufferedReader(new FileReader(file));
+    StringBuilder sb = new StringBuilder();
+    Stream<String> lines = br.lines();
+    lines.forEach(line -> sb.append(line).append("\n"));
+
+    return sb.toString();
+  }
 
   /**
    * Tests that invoking the main method with no arguments issues an error
@@ -41,6 +71,14 @@ public class Project2IT extends InvokeMainTestCase {
     MainMethodResult result =
             invokeMain("-print", "-otheroption", "arg1", "arg2", "arg3", "arg4",
                     "arg5", "arg6", "1/1/1111", "00:00", "arg too many!");
+    assertThat(result.getExitCode(), equalTo(1));
+    assertThat(result.getTextWrittenToStandardError(), containsString("Too many command line arguments."));
+  }
+
+  @Test
+  public void tooManyArgumentsInFlightInfo() {
+    MainMethodResult result =
+            invokeMain("arg1", "arg2", "arg3", "arg4", "arg5", "arg6", "1/1/1111", "00:00", "arg too many!");
     assertThat(result.getExitCode(), equalTo(1));
     assertThat(result.getTextWrittenToStandardError(), containsString("Too many command line arguments."));
   }
@@ -254,9 +292,43 @@ public class Project2IT extends InvokeMainTestCase {
   }
 
   @Test
-  public void printIsSecondArgument() {
+  public void readmeIsThirdArgument() {
     MainMethodResult result =
-            invokeMain("-option", "-print", "arg1", "0", "aal", "11/11/1111", "00:00", "arg", "1/1/1111", "00:00");
+            invokeMain("-print", "-arg", "-README", "arg1", "0", "3al", "11/11/1111", "00:00", "arg",
+                    "1/1/1111", "00:00");
     assertThat(result.getExitCode(), equalTo(0));
+  }
+
+  @Test
+  public void textFileNotTextFileFormatExtension() {
+    MainMethodResult result =
+            invokeMain("-print", "-arg", "-textFile", "file.q", "arg1", "0", "aal", "11/11/1111", "00:00", "arg",
+                    "1/1/1111", "00:00");
+    assertThat(result.getExitCode(), equalTo(7));
+    assertThat(result.getTextWrittenToStandardError(),
+            containsString("File extension not valid for a text file"));
+  }
+
+  @Test
+  public void test1CreateNewAirlineFileWhenFileDoesNotExist() throws FileNotFoundException {
+    assertThat(airlineFile.exists(), equalTo(false));
+
+    invokeMain("-textFile", airlineFile.getAbsolutePath(), "MyAirline",
+            "123", "PDX", "7/16/2017 15:00", "LAX", "7/16/2017", "18:00");
+
+    String fileContents = readFile(airlineFile);
+    assertThat(fileContents, containsString("123"));
+  }
+
+  @Test
+  public void test2AddFlightToExistingAirlineFile() throws FileNotFoundException {
+    assertThat(airlineFile.exists(), equalTo(true));
+
+    invokeMain("-textFile", airlineFile.getAbsolutePath(), "MyAirline",
+            "234", "PDX", "7/17/2017 15:00", "LAX", "7/17/2017", "18:00");
+
+    String fileContents = readFile(airlineFile);
+    assertThat(fileContents, containsString("123"));
+    assertThat(fileContents, containsString("234"));
   }
 }

@@ -62,13 +62,4 @@ public class TextParserTest {
     TextParser parser = new TextParser(fileName);
     parser.parse();
   }
-
-  /*
-  @Test
-  public void testFileCreatedWithTextDumper() throws ParserException {
-    String fileName = "testwrite.txt";
-    TextParser parser = new TextParser(fileName);
-    System.out.println(parser.parse().getFlights());
-  }
-  */
 }

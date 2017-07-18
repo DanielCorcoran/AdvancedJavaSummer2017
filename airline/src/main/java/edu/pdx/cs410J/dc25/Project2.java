@@ -1,22 +1,34 @@
 package edu.pdx.cs410J.dc25;
 
+import edu.pdx.cs410J.AbstractAirline;
+import edu.pdx.cs410J.ParserException;
+
+import java.io.File;
+import java.io.IOException;
+
 /**
- * This class is the main class for Project 1 for 410J.  It takes arguments from the command line, verifies their
- * validity and completeness, and uses them to create objects of the <code>Flight</code> and <code>Airline</code>
- * classes.
+ * This class is the main class for Project 2 for 410J.  It takes arguments from the command line, verifies their
+ * validity and completeness, and uses them to create objects of the {@link Flight} and {@link Airline} classes.  This
+ * class can also take in the name of a text file and write the data passed in to the file if both the name of the
+ * airline passed in and the name of the airline in the file match.
  */
 public class Project2 {
+  private static final int OPTIONS = 4;
 
   public static void main(String[] args) {
-    int argOffset = 0;          //Variable to account for options when parsing arguments
-    int flightNumber;           //Flight number in integer form (after conversion from string)
-    String depart;              //Combined date and time of departure
-    String arrive;              //Combined date and time of arrival
-    boolean toPrint = false;    //Flag to tell the program to print flight data
+    int argOffset = 0;                    //Variable to account for options when parsing arguments
+    int flightNumber;                     //Flight number in integer form (after conversion from string)
+    String depart;                        //Combined date and time of departure
+    String arrive;                        //Combined date and time of arrival
+    String fileName = null;               //Name of file passed in from command line
+    boolean toPrint = false;              //Flag to tell the program to print flight data
+    Airline airlineFromTextFile = null;   //Airline read in from from text file specified in command line
 
-    //If one of the first 2 args (options) is -README, print readme
-    if ((args.length >= 1 && args[0].equals("-README")) || (args.length >= 2 && args[1].equals("-README"))) {
-      readme();
+    //If one of the first 4 (counting -textFile as 2) args is -README, print readme
+    for (int i = 0; i < OPTIONS; ++i) {
+      if (((args.length >= i + 1) && args[i].equals("-README"))) {
+        readme();
+      }
     }
 
     //Checks for minimum number of arguments necessary to run the program
@@ -29,28 +41,35 @@ public class Project2 {
       System.exit(1);
     }
 
+    //Check for option to print flight data
+    for (int i = 0; i < OPTIONS; ++i) {
+      if (args[i].equals("-print")) {
+        toPrint = true;
+        argOffset += 1;
+      }
+    }
+
+    //Check for option to store flight in text file
+    for (int i = 0; i < OPTIONS; ++i) {
+      if (args[i].equals("-textFile")) {
+        if (args[i + 1].contains(".txt") || args[i + 1].contains(".xml")) {
+          fileName = args[i + 1];
+          argOffset += 2;
+        } else {
+          System.err.println("File extension not valid for a text file");
+          System.exit(7);
+        }
+      }
+    }
+
     //Checks for maximum number of possible arguments
-    if (args.length > 10) {
+    if (args.length - argOffset > 8) {
       System.err.println("Too many command line arguments.  " +
               "Make sure there are exactly 8 (in addition to options) when running the program");
       for (String arg : args) {
         System.out.println(arg);
       }
       System.exit(1);
-    }
-
-    //Check for option to print flight data
-    if (args[0].equals("-print") || args[1].equals("-print")) {
-      toPrint = true;
-    }
-
-    //Offsets arguments when options are present
-    if (args[0].startsWith("-")) {
-      if (args[1].startsWith("-")) {
-        argOffset = 2;
-      } else {
-        argOffset = 1;
-      }
     }
 
     flightNumber = verifyFlightNumberIsInteger(args[1 + argOffset]);
@@ -82,6 +101,39 @@ public class Project2 {
     Airline airline = new Airline(args[argOffset]);
     Flight flight = new Flight(flightNumber, args[2 + argOffset], depart, args[5 + argOffset], arrive);
     airline.addFlight(flight);
+
+    //If file given in command line is valid, call the parse method and catch an exception if the file is not
+    //properly formatted.  Save the airline info in a variable.
+    if (fileName != null) {
+      File file = new File(fileName);
+
+      if (file.exists()) {
+        TextParser parser = new TextParser(fileName);
+        try {
+          airlineFromTextFile = (Airline) parser.parse();
+        } catch (ParserException e) {
+          System.err.println("File not correctly formatted");
+          System.exit(8);
+        }
+      }
+    }
+
+    //If the airline info was stored from the file, compare name to name of airline passed in from command line.
+    //If equal, add flight from command line to airline and dump back to file.
+    if (airlineFromTextFile != null) {
+      if (airlineFromTextFile.getName().compareTo(airline.getName()) == 0) {
+        airlineFromTextFile.addFlight(flight);
+        TextDumper dumper = new TextDumper(fileName);
+        try {
+          dumper.dump(airlineFromTextFile);
+        } catch (IOException e) {
+          System.err.println("Can't write to file");
+        }
+      } else {
+        System.err.println("Name of airline from command line does not match name of airline from text file");
+        System.exit(9);
+      }
+    }
 
     //Prints flight data if option was flagged
     if (toPrint) {
@@ -300,7 +352,12 @@ public class Project2 {
   private static void readme() {
     System.out.println("This program creates an airline flight via data passed in from the user on the command line.");
     System.out.println("This can be a flight that has already happened or will happen in the future.");
-    System.out.println("The flight data will not be stored after the program terminates.");
+    System.out.println("The flight data will not be stored after the program terminates, unless a file is specified.");
+    System.out.println("If a file is given, but no file exists with that name, one will be created and the flight " +
+            "data will be stored there");
+    System.out.println("Otherwise, the flight data will be added to the file if the airline names match");
+    System.out.println("If they do not match, the flight will not be added to the file and the data will be lost " +
+            "when the program terminates.");
     System.out.println("All data must be entered correctly in the correct position of the command line " +
             "or the program will not work.");
     System.out.println("The user will be given an error message if data has been incorrectly entered.");
@@ -317,6 +374,7 @@ public class Project2 {
     System.out.println("arriveDate      Arrival date of the flight (in MM/DD/YYYY");
     System.out.println("arriveTime      Arrival time of the flight (in HH:MM, 24 hour time)");
     System.out.println("The options are (and may appear in any order)");
+    System.out.println("-textFile file  Where to read/write the airline info (file must be a text document)");
     System.out.println("-print          Prints the new flight data back to the user");
     System.out.println("-README         Prints a README for the project and exits the program");
     System.out.println("OPTIONS ARE CASE SENSITIVE");
