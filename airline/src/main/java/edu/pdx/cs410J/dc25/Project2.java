@@ -110,6 +110,10 @@ public class Project2 {
         TextParser parser = new TextParser(fileName);
         try {
           airlineFromTextFile = (Airline) parser.parse();
+          if (!verifyFileDataIsInCorrectFormat(airlineFromTextFile)) {
+            System.err.println("File not correctly formatted");
+            System.exit(8);
+          }
         } catch (ParserException e) {
           System.err.println("File not correctly formatted");
           System.exit(8);
@@ -146,6 +150,47 @@ public class Project2 {
       System.out.println(flight.toString());
       System.exit(0);
     }
+  }
+
+  /**
+   * This method checks the flight data for each {@link Flight} read in from the file for correct formatting
+   *
+   * @param airline
+   *        {@link Airline} that was read in from the file
+   * @return
+   *        Returns true if format of all data in the file is correct, returns false otherwise
+   */
+  private static boolean verifyFileDataIsInCorrectFormat(Airline airline) {
+    String date;
+    String time;
+    boolean formatIsCorrect = true;
+
+    Flight[] flightArray = airline.getFlights().toArray(new Flight[airline.getFlights().size()]);
+
+    for (Flight aFlightArray : flightArray) {
+      isAirportCodeLegal(aFlightArray.getSource());
+      isAirportCodeLegal(aFlightArray.getDestination());
+
+      date = aFlightArray.getDepartureString().substring(0, aFlightArray.getDepartureString().indexOf(" "));
+      time = aFlightArray.getDepartureString().substring(aFlightArray.getDepartureString().indexOf(" ") + 1);
+
+      isDateLengthLegal(date);
+      isTimeLengthLegal(time);
+      if (!verifyDateFormat(date) || !verifyTimeFormat(time)) {
+        formatIsCorrect = false;
+      }
+
+      date = aFlightArray.getArrivalString().substring(0, aFlightArray.getArrivalString().indexOf(" "));
+      time = aFlightArray.getArrivalString().substring(aFlightArray.getArrivalString().indexOf(" ") + 1);
+
+      isDateLengthLegal(date);
+      isTimeLengthLegal(time);
+      if (!verifyDateFormat(date) || !verifyTimeFormat(time)) {
+        formatIsCorrect = false;
+      }
+    }
+
+    return formatIsCorrect;
   }
 
   /**
@@ -311,9 +356,8 @@ public class Project2 {
    *        Returns true if there are 2 digits in the minutes place.  Returns false otherwise.
    */
   private static boolean verifyNumberOfDigitsInMinutes(String arg, int digitsInHour) {
-    return Character.isDigit(arg.charAt(digitsInHour + 1)) &&
-            Character.isDigit(arg.charAt(digitsInHour + 2)) &&
-            arg.substring(digitsInHour + 1).length() == 2;
+    return arg.substring(digitsInHour + 1).length() == 2 && Character.isDigit(arg.charAt(digitsInHour + 1)) &&
+            Character.isDigit(arg.charAt(digitsInHour + 2));
   }
 
   /**

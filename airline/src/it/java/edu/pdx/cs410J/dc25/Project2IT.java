@@ -288,4 +288,13 @@ public class Project2IT extends InvokeMainTestCase {
     assertThat(result.getTextWrittenToStandardError(),
             containsString("Name of airline from command line"));
   }
+
+  @Test
+  public void fileIncorrectlyFormatted() {
+    MainMethodResult result =
+            invokeMain("-print", "-textFile", "badfile.txt", "airline",
+                    "0", "aal", "11/11/1111", "00:00", "arg", "1/1/1111", "00:00");
+    assertThat(result.getExitCode(), equalTo(8));
+    assertThat(result.getTextWrittenToStandardError(), containsString("File not correctly formatted"));
+  }
 }
