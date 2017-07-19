@@ -71,34 +71,42 @@ public class Project2 {
       System.exit(1);
     }
 
-    flightNumber = verifyFlightNumberIsInteger(args[1 + argOffset]);
+    String flightNumberAsString = args[1 + argOffset];
+    String departAirport = args[2 + argOffset];
+    String departDate = args[3 + argOffset];
+    String departTime = args[4 + argOffset];
+    String arriveAirport = args[5 + argOffset];
+    String arriveDate = args[6 + argOffset];
+    String arriveTime = args[7 + argOffset];
 
-    isDateLengthLegal(args[3 + argOffset]);
-    isDateLengthLegal(args[6 + argOffset]);
+    flightNumber = verifyFlightNumberIsInteger(flightNumberAsString);
 
-    if (!verifyDateFormat(args[3 + argOffset]) || !verifyDateFormat(args[6 + argOffset])) {
+    isDateLengthLegal(departDate);
+    isDateLengthLegal(arriveDate);
+
+    if (!verifyDateFormat(departDate) || !verifyDateFormat(arriveDate)) {
       System.err.println("Date not in the correct MM/DD/YYYY format");
       System.exit(4);
     }
 
-    isTimeLengthLegal(args[4 + argOffset]);
-    isTimeLengthLegal(args[7 + argOffset]);
+    isTimeLengthLegal(departTime);
+    isTimeLengthLegal(arriveTime);
 
-    if (!verifyTimeFormat(args[4 + argOffset]) || !verifyTimeFormat(args[7 + argOffset])) {
+    if (!verifyTimeFormat(departTime) || !verifyTimeFormat(arriveTime)) {
       System.err.println("Time not in the correct HH:MM format");
       System.exit(5);
     }
 
-    isAirportCodeLegal(args[2 + argOffset]);
-    isAirportCodeLegal(args[5 + argOffset]);
+    isAirportCodeLegal(departAirport);
+    isAirportCodeLegal(arriveAirport);
 
     //Combines date and time to create single strings
-    depart = args[3 + argOffset] + " " + args[4 + argOffset];
-    arrive = args[6 + argOffset] + " " + args[7 + argOffset];
+    depart = departDate + " " + departTime;
+    arrive = arriveDate + " " + arriveTime;
 
     //Creates new instance of Airline and Flight classes and sets their data to args
     Airline airline = new Airline(args[argOffset]);
-    Flight flight = new Flight(flightNumber, args[2 + argOffset], depart, args[5 + argOffset], arrive);
+    Flight flight = new Flight(flightNumber, departAirport, depart, arriveAirport, arrive);
     airline.addFlight(flight);
 
     //If file given in command line is valid, call the parse method and catch an exception if the file is not
