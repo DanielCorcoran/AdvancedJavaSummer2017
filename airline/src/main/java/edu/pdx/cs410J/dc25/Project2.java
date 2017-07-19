@@ -1,6 +1,5 @@
 package edu.pdx.cs410J.dc25;
 
-import edu.pdx.cs410J.AbstractAirline;
 import edu.pdx.cs410J.ParserException;
 
 import java.io.File;
@@ -114,6 +113,13 @@ public class Project2 {
         } catch (ParserException e) {
           System.err.println("File not correctly formatted");
           System.exit(8);
+        }
+      } else {
+        TextDumper dumper = new TextDumper(fileName);
+        try {
+          dumper.dump(airline);
+        } catch (IOException e) {
+          System.err.println("Can't write to file");
         }
       }
     }

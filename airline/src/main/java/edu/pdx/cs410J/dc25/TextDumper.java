@@ -32,15 +32,14 @@ public class TextDumper implements AirlineDumper {
    */
   @Override
   public void dump(AbstractAirline abstractAirline) throws IOException {
-
     try (FileWriter fw = new FileWriter(this.fileName); BufferedWriter bw = new BufferedWriter(fw)) {
       //Turns collection of flights in airline object to an array of flights
       Flight[] flightArray =
               (Flight[]) abstractAirline.getFlights().toArray(new Flight[abstractAirline.getFlights().size()]);
       String toWrite = abstractAirline.getName() + "|" + createFlightInfoString(flightArray[0]);
 
-      for (Flight aFlightArray : flightArray) {
-        toWrite += "\n" + createFlightInfoString(aFlightArray);
+      for (int i = 1; i < flightArray.length; ++i) {
+        toWrite += "\n" + createFlightInfoString(flightArray[i]);
       }
 
       bw.write(toWrite);
