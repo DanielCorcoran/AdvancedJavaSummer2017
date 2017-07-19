@@ -51,13 +51,8 @@ public class Project2 {
     //Check for option to store flight in text file
     for (int i = 0; i < OPTIONS; ++i) {
       if (args[i].equals("-textFile")) {
-        if (args[i + 1].contains(".txt") || args[i + 1].contains(".xml")) {
-          fileName = args[i + 1];
-          argOffset += 2;
-        } else {
-          System.err.println("File extension not valid for a text file");
-          System.exit(7);
-        }
+        fileName = args[i + 1];
+        argOffset += 2;
       }
     }
 

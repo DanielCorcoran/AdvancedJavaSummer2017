@@ -270,16 +270,6 @@ public class Project2IT extends InvokeMainTestCase {
   }
 
   @Test
-  public void textFileNotTextFileFormatExtension() {
-    MainMethodResult result =
-            invokeMain("-print", "-arg", "-textFile", "file.q", "arg1", "0", "aal", "11/11/1111", "00:00", "arg",
-                    "1/1/1111", "00:00");
-    assertThat(result.getExitCode(), equalTo(7));
-    assertThat(result.getTextWrittenToStandardError(),
-            containsString("File extension not valid for a text file"));
-  }
-
-  @Test
   public void airlineNotTheSameAsTextFile() {
     MainMethodResult result =
             invokeMain("-print", "-textFile", "test.txt", "wrong",
