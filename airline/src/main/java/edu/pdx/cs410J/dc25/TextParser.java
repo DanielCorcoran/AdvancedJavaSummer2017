@@ -5,6 +5,7 @@ import edu.pdx.cs410J.AirlineParser;
 import edu.pdx.cs410J.ParserException;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 /**
@@ -61,6 +62,8 @@ public class TextParser implements AirlineParser{
         airline.addFlight(flight);
       }
       return airline;
+    } catch (FileNotFoundException e) {
+      throw new ParserException("Cannot find file to read from");
     } catch (Exception e) {
       throw new ParserException("File not correctly formatted");
     }
