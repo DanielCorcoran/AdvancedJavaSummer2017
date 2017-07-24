@@ -11,7 +11,7 @@ import java.io.IOException;
  * class can also take in the name of a text file and write the data passed in to the file if both the name of the
  * airline passed in and the name of the airline in the file match.
  */
-public class Project2 {
+public class Project3 {
   private static final int OPTIONS = 4;
 
   public static void main(String[] args) {
@@ -408,25 +408,34 @@ public class Project2 {
     System.out.println("The flight data will not be stored after the program terminates, unless a file is specified.");
     System.out.println("If a file is given, but no file exists with that name, one will be created and the flight " +
             "data will be stored there");
-    System.out.println("Otherwise, the flight data will be added to the file if the airline names match");
+    System.out.println("Otherwise, the flight data will be added to the file if the airline names match.");
     System.out.println("If they do not match, the flight will not be added to the file and the data will be lost " +
             "when the program terminates.");
+    System.out.println("There is also an option to put the airline data in an easily readable format.");
+    System.out.println("The -pretty option will store the flight data in a file (if one is specified), otherwise the " +
+            "data will be displayed on the screen.");
+    System.out.println("If a text file is also specified, that data will be stored/displayed as well if the airline " +
+            "names match.");
     System.out.println("All data must be entered correctly in the correct position of the command line " +
             "or the program will not work.");
     System.out.println("The user will be given an error message if data has been incorrectly entered.");
     System.out.println();
     System.out.println("The command line interface must be as follows (options without [] and arguments without <>):");
-    System.out.println("java edu.pdx.cs410J.dc25.Project2 [options] <args>");
+    System.out.println("java edu.pdx.cs410J.dc25.Project3 [options] <args>");
     System.out.println("Arguments are (in this order):");
     System.out.println("name            Name of the airline (if more than one word, must be surrounded by quotes)");
     System.out.println("flightNumber    The flight number");
     System.out.println("src             Three letter code of departure airport");
     System.out.println("departDate      Departure date of flight (in MM/DD/YYYY)");
-    System.out.println("departTime      Departure time of flight (in HH:MM, 24 hour time)");
+    System.out.println("departTime      Departure time of flight (in HH:MM)");
+    System.out.println("departAP        Flight departs in the am or pm (case sensitive)");
     System.out.println("dest            Three letter code of arrival airport");
     System.out.println("arriveDate      Arrival date of the flight (in MM/DD/YYYY");
-    System.out.println("arriveTime      Arrival time of the flight (in HH:MM, 24 hour time)");
+    System.out.println("arriveTime      Arrival time of the flight (in HH:MM)");
+    System.out.println("arriveAP        Flight arrives in the am or pm (case sensitive)");
     System.out.println("The options are (and may appear in any order)");
+    System.out.println("-pretty file    " +
+            "Pretty print the airline's flights to a text file or standard out (using - for the file name");
     System.out.println("-textFile file  Where to read/write the airline info (file must be a text document)");
     System.out.println("-print          Prints the new flight data back to the user");
     System.out.println("-README         Prints a README for the project and exits the program");

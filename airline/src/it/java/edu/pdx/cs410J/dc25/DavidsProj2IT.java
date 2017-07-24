@@ -38,7 +38,7 @@ public class DavidsProj2IT extends InvokeMainTestCase {
   }
 
   private void invokeProject2(String... args) {
-    invokeMain(Project2.class, args);
+    invokeMain(Project3.class, args);
   }
 
   private String readFile(File file) throws FileNotFoundException {
