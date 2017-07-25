@@ -2,6 +2,9 @@ package edu.pdx.cs410J.dc25;
 
 import edu.pdx.cs410J.AbstractFlight;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -56,11 +59,12 @@ public class Flight extends AbstractFlight {
   }
 
   /**
-   * @return Time of departure
+   * @return Date and time of departure
    */
   @Override
   public String getDepartureString() {
-    return this.depart;
+    DateFormat df = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
+    return df.format(getDeparture());
   }
 
   /**
@@ -72,22 +76,45 @@ public class Flight extends AbstractFlight {
   }
 
   /**
-   * @return Time of arrival
+   * @return Date and time of arrival
    */
   @Override
   public String getArrivalString() {
-    return this.arrival;
+    DateFormat df = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
+    return df.format(getArrival());
   }
 
-  /*
+  /**
+   * @return Date and time of departure as a date
+   */
   @Override
   public Date getDeparture() {
-    return
+    SimpleDateFormat parseFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm a");
+
+    Date departAsDate = null;
+    try {
+      departAsDate = parseFormat.parse(depart);
+    }catch (ParseException e) {
+      System.out.println("Unparseable using " + parseFormat);
+    }
+
+    return departAsDate;
   }
 
+  /**
+   * @return Date and time of arrival as a date
+   */
   @Override
   public Date getArrival() {
-    return
+    SimpleDateFormat parseFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm a");
+
+    Date arriveAsDate = null;
+    try {
+      arriveAsDate = parseFormat.parse(arrival);
+    }catch (ParseException e) {
+      System.out.println("Unparseable using " + parseFormat);
+    }
+
+    return arriveAsDate;
   }
-  */
 }

@@ -213,7 +213,7 @@ public class Project3 {
    * @param arg
    *        am/pm argument from command line
    * @return
-   *        Returns 1 if am and 2 if pm.  Otherwise prints an error and exits.
+   *        Returns the string "am" if am, "pm" if pm.  Otherwise prints an error and exits.
    */
   private static String getAP(String arg) {
     switch (arg) {
