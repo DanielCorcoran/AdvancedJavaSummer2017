@@ -6,24 +6,25 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * This class is the main class for Project 2 for 410J.  It takes arguments from the command line, verifies their
+ * This class is the main class for Project 3 for 410J.  It takes arguments from the command line, verifies their
  * validity and completeness, and uses them to create objects of the {@link Flight} and {@link Airline} classes.  This
  * class can also take in the name of a text file and write the data passed in to the file if both the name of the
  * airline passed in and the name of the airline in the file match.
  */
 public class Project3 {
-  private static final int OPTIONS = 4;
+  private static final int OPTIONS = 6;
 
   public static void main(String[] args) {
     int argOffset = 0;                    //Variable to account for options when parsing arguments
     int flightNumber;                     //Flight number in integer form (after conversion from string)
     String depart;                        //Combined date and time of departure
     String arrive;                        //Combined date and time of arrival
-    String fileName = null;               //Name of file passed in from command line
+    String textFileName = null;           //Name of text file passed in from command line
+    String prettyFileName = null;         //Name of the pretty print file
     boolean toPrint = false;              //Flag to tell the program to print flight data
     Airline airlineFromTextFile = null;   //Airline read in from from text file specified in command line
 
-    //If one of the first 4 (counting -textFile as 2) args is -README, print readme
+    //If one of the first 6 args (counting -textFile and -pretty as 2 each) is -README, print readme
     for (int i = 0; i < OPTIONS; ++i) {
       if (((args.length >= i + 1) && args[i].equals("-README"))) {
         readme();
@@ -31,9 +32,9 @@ public class Project3 {
     }
 
     //Checks for minimum number of arguments necessary to run the program
-    if (args.length < 8) {
+    if (args.length < 10) {
       System.err.println("Missing command line arguments.  " +
-              "Make sure there are exactly 8 (in addition to options) when running the program");
+              "Make sure there are exactly 10 (in addition to options) when running the program");
       for (String arg : args) {
         System.out.println(arg);
       }
@@ -51,15 +52,18 @@ public class Project3 {
     //Check for option to store flight in text file
     for (int i = 0; i < OPTIONS; ++i) {
       if (args[i].equals("-textFile")) {
-        fileName = args[i + 1];
+        textFileName = args[i + 1];
         argOffset += 2;
       }
     }
 
+    //Check for option to pretty print flights
+    //TODO make this work
+
     //Checks for maximum number of possible arguments
-    if (args.length - argOffset > 8) {
+    if (args.length - argOffset > 10) {
       System.err.println("Too many command line arguments.  " +
-              "Make sure there are exactly 8 (in addition to options) when running the program");
+              "Make sure there are exactly 10 (in addition to options) when running the program");
       for (String arg : args) {
         System.out.println(arg);
       }
@@ -70,9 +74,9 @@ public class Project3 {
     String departAirport = args[2 + argOffset];
     String departDate = args[3 + argOffset];
     String departTime = args[4 + argOffset];
-    String arriveAirport = args[5 + argOffset];
-    String arriveDate = args[6 + argOffset];
-    String arriveTime = args[7 + argOffset];
+    String arriveAirport = args[6 + argOffset];
+    String arriveDate = args[7 + argOffset];
+    String arriveTime = args[8 + argOffset];
 
     flightNumber = verifyFlightNumberIsInteger(flightNumberAsString);
 
@@ -106,11 +110,11 @@ public class Project3 {
 
     //If file given in command line is valid, call the parse method and catch an exception if the file is not
     //properly formatted.  Save the airline info in a variable.
-    if (fileName != null) {
-      File file = new File(fileName);
+    if (textFileName != null) {
+      File file = new File(textFileName);
 
       if (file.exists()) {
-        TextParser parser = new TextParser(fileName);
+        TextParser parser = new TextParser(textFileName);
         try {
           airlineFromTextFile = (Airline) parser.parse();
           if (!verifyFileDataIsInCorrectFormat(airlineFromTextFile)) {
@@ -122,7 +126,7 @@ public class Project3 {
           System.exit(8);
         }
       } else {
-        TextDumper dumper = new TextDumper(fileName);
+        TextDumper dumper = new TextDumper(textFileName);
         try {
           dumper.dump(airline);
         } catch (IOException e) {
@@ -136,7 +140,7 @@ public class Project3 {
     if (airlineFromTextFile != null) {
       if (airlineFromTextFile.getName().compareTo(airline.getName()) == 0) {
         airlineFromTextFile.addFlight(flight);
-        TextDumper dumper = new TextDumper(fileName);
+        TextDumper dumper = new TextDumper(textFileName);
         try {
           dumper.dump(airlineFromTextFile);
         } catch (IOException e) {
@@ -441,7 +445,7 @@ public class Project3 {
     System.out.println("-README         Prints a README for the project and exits the program");
     System.out.println("OPTIONS ARE CASE SENSITIVE");
     System.out.println();
-    System.out.println("Dan Corcoran  Project 1");
+    System.out.println("Dan Corcoran  Project 3");
     System.exit(0);
   }
 }

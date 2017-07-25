@@ -11,12 +11,28 @@ import static org.hamcrest.MatcherAssert.assertThat;
  * An integration test for the {@link Project3} main class.
  */
 public class Project3IT extends InvokeMainTestCase {
+  private String airline = "airline";
+  private String flightNumber = "555";
+  private String source = "PDX";
+  private String departDate = "7/25/2017";
+  private String departTime = "12:00";
+  private String departAP = "am";
+  private String destination = "DEN";
+  private String arriveDate = "7/25/2017";
+  private String arriveTime = "12:01";
+  private String arriveAP = "am";
 
   /**
    * Invokes the main method of {@link Project3} with the given arguments.
    */
   private MainMethodResult invokeMain(String... args) {
     return invokeMain(Project3.class, args );
+  }
+
+  private MainMethodResult createFlight(String airline, String flightNumber, String source, String departDate,
+                                        String departTime, String departAP, String destination, String arriveDate,
+                                        String arriveTime, String arriveAP) {
+    return invokeMain(airline, flightNumber, source, departDate, departTime, departAP, destination, arriveDate, arriveTime, arriveAP);
   }
 
   /**
@@ -38,25 +54,24 @@ public class Project3IT extends InvokeMainTestCase {
 
   @Test
   public void tooManyCommandLineArguments() {
-    MainMethodResult result =
-            invokeMain("-print", "-otheroption", "arg1", "arg2", "arg3", "arg4",
-                    "arg5", "arg6", "1/1/1111", "00:00", "arg too many!");
+    MainMethodResult result = invokeMain("-print", "-otheroption", airline, flightNumber, source, departDate,
+            departTime, departAP, destination, arriveDate, arriveTime, arriveAP, "arg too many!");
     assertThat(result.getExitCode(), equalTo(1));
     assertThat(result.getTextWrittenToStandardError(), containsString("Too many command line arguments."));
   }
 
   @Test
   public void tooManyArgumentsInFlightInfo() {
-    MainMethodResult result =
-            invokeMain("arg1", "arg2", "arg3", "arg4", "arg5", "arg6", "1/1/1111", "00:00", "arg too many!");
+    MainMethodResult result = invokeMain(airline, flightNumber, source, departDate, departTime, departAP,
+            destination, arriveDate, arriveTime, arriveAP, "arg too many!");
     assertThat(result.getExitCode(), equalTo(1));
     assertThat(result.getTextWrittenToStandardError(), containsString("Too many command line arguments."));
   }
 
   @Test
   public void flightNumberIsNotAnInteger() {
-    MainMethodResult result =
-            invokeMain("arg1", "arg2", "arg3", "arg4", "arg5", "arg6", "1/1/1111", "00:00");
+    MainMethodResult result = createFlight(airline, "not a number", source, departDate, departTime,
+            departAP, destination, arriveDate, arriveTime, arriveAP);
     assertThat(result.getExitCode(), equalTo(2));
     assertThat(result.getTextWrittenToStandardError(),
             containsString("Flight number must contain only numbers"));
@@ -64,8 +79,8 @@ public class Project3IT extends InvokeMainTestCase {
 
   @Test
   public void tooManyNumbersInMonthOfDate() {
-    MainMethodResult result =
-            invokeMain("arg1", "0", "arg3", "1111//1111", "arg5", "arg6", "1/1/1111", "00:00");
+    MainMethodResult result = createFlight(airline, flightNumber, source, "111/1/2017", departTime, departAP,
+            destination, arriveDate, arriveTime, arriveAP);
     assertThat(result.getExitCode(), equalTo(4));
     assertThat(result.getTextWrittenToStandardError(),
             containsString("Date not in the correct MM/DD/YYYY format"));
@@ -73,8 +88,8 @@ public class Project3IT extends InvokeMainTestCase {
 
   @Test
   public void noNumbersInMonthOfDate() {
-    MainMethodResult result =
-            invokeMain("arg1", "0", "arg3", "/11/1111", "arg5", "arg6", "1/1/1111", "00:00");
+    MainMethodResult result = createFlight(airline, flightNumber, source, "/11/2017", departTime, departAP,
+            destination, arriveDate, arriveTime, arriveAP);
     assertThat(result.getExitCode(), equalTo(4));
     assertThat(result.getTextWrittenToStandardError(),
             containsString("Date not in the correct MM/DD/YYYY format"));
@@ -82,8 +97,8 @@ public class Project3IT extends InvokeMainTestCase {
 
   @Test
   public void noNumbersInDayOfDate() {
-    MainMethodResult result =
-            invokeMain("arg1", "0", "arg3", "10//1111", "arg5", "arg6", "1/1/1111", "00:00");
+    MainMethodResult result = createFlight(airline, flightNumber, source, "11//2017", departTime, departAP,
+            destination, arriveDate, arriveTime, arriveAP);
     assertThat(result.getExitCode(), equalTo(4));
     assertThat(result.getTextWrittenToStandardError(),
             containsString("Date not in the correct MM/DD/YYYY format"));
@@ -91,8 +106,8 @@ public class Project3IT extends InvokeMainTestCase {
 
   @Test
   public void tooManyNumbersInDayOfDate() {
-    MainMethodResult result =
-            invokeMain("arg1", "0", "arg3", "11/111/111", "arg5", "arg6", "1/1/1111", "00:00");
+    MainMethodResult result = createFlight(airline, flightNumber, source, "1/111/2017", departTime, departAP,
+            destination, arriveDate, arriveTime, arriveAP);
     assertThat(result.getExitCode(), equalTo(4));
     assertThat(result.getTextWrittenToStandardError(),
             containsString("Date not in the correct MM/DD/YYYY format"));
@@ -100,8 +115,8 @@ public class Project3IT extends InvokeMainTestCase {
 
   @Test
   public void notEnoughNumbersInYearOfDate() {
-    MainMethodResult result =
-            invokeMain("arg1", "0", "arg3", "11/11/111", "arg5", "arg6", "1/1/1111", "00:00");
+    MainMethodResult result = createFlight(airline, flightNumber, source, "11/11/201", departTime, departAP,
+            destination, arriveDate, arriveTime, arriveAP);
     assertThat(result.getExitCode(), equalTo(4));
     assertThat(result.getTextWrittenToStandardError(),
             containsString("Date not in the correct MM/DD/YYYY format"));
@@ -109,17 +124,17 @@ public class Project3IT extends InvokeMainTestCase {
 
   @Test
   public void tooManyNumbersInYearOfDate() {
-    MainMethodResult result =
-            invokeMain("arg1", "0", "arg3", "11/11/11111", "arg5", "arg6", "1/1/1111", "00:00");
-    assertThat(result.getExitCode(), equalTo(3));
+    MainMethodResult result = createFlight(airline, flightNumber, source, "1/1/20177", departTime, departAP,
+            destination, arriveDate, arriveTime, arriveAP);
+    assertThat(result.getExitCode(), equalTo(4));
     assertThat(result.getTextWrittenToStandardError(),
             containsString("Date not in the correct MM/DD/YYYY format"));
   }
 
   @Test
   public void nonNumberInMonth() {
-    MainMethodResult result =
-            invokeMain("arg1", "0", "arg3", "1t/11/1111", "", "arg6", "1/1/1111", "00:00");
+    MainMethodResult result = createFlight(airline, flightNumber, source, "T/1/2017", departTime, departAP,
+            destination, arriveDate, arriveTime, arriveAP);
     assertThat(result.getExitCode(), equalTo(4));
     assertThat(result.getTextWrittenToStandardError(),
             containsString("Date not in the correct MM/DD/YYYY format"));
@@ -127,8 +142,8 @@ public class Project3IT extends InvokeMainTestCase {
 
   @Test
   public void nonNumberInDay() {
-    MainMethodResult result =
-            invokeMain("arg1", "0", "arg3", "11/t1/1111", "", "arg6", "1/1/1111", "00:00");
+    MainMethodResult result = createFlight(airline, flightNumber, source, "1/T/2017", departTime, departAP,
+            destination, arriveDate, arriveTime, arriveAP);
     assertThat(result.getExitCode(), equalTo(4));
     assertThat(result.getTextWrittenToStandardError(),
             containsString("Date not in the correct MM/DD/YYYY format"));
@@ -136,8 +151,8 @@ public class Project3IT extends InvokeMainTestCase {
 
   @Test
   public void nonNumberInYear() {
-    MainMethodResult result =
-            invokeMain("arg1", "0", "arg3", "11/11/t111", "", "arg6", "1/1/1111", "00:00");
+    MainMethodResult result = createFlight(airline, flightNumber, source, "1/1/TTTT", departTime, departAP,
+            destination, arriveDate, arriveTime, arriveAP);
     assertThat(result.getExitCode(), equalTo(4));
     assertThat(result.getTextWrittenToStandardError(),
             containsString("Date not in the correct MM/DD/YYYY format"));
@@ -145,8 +160,8 @@ public class Project3IT extends InvokeMainTestCase {
 
   @Test
   public void checkToSeeIfThereAreAtLeast4CharsInDate() {
-    MainMethodResult result =
-            invokeMain("arg1", "0", "arg3", "1/1", "arg5", "arg6", "1/1/1111", "00:00");
+    MainMethodResult result = createFlight(airline, flightNumber, source, "1/1", departTime, departAP,
+            destination, arriveDate, arriveTime, arriveAP);
     assertThat(result.getExitCode(), equalTo(3));
     assertThat(result.getTextWrittenToStandardError(),
             containsString("Date not in the correct MM/DD/YYYY format"));
@@ -154,15 +169,15 @@ public class Project3IT extends InvokeMainTestCase {
 
   @Test
   public void dateHappyPath() {
-    MainMethodResult result =
-            invokeMain("arg1", "0", "AAA", "11/11/1111", "00:00", "AAA", "1/1/1111", "00:00");
+    MainMethodResult result = createFlight(airline, flightNumber, source, departDate, departTime, departAP, destination,
+            arriveDate, arriveTime, arriveAP);
     assertThat(result.getExitCode(), equalTo(null));
   }
 
   @Test
   public void timeStringIsEmpty() {
-    MainMethodResult result =
-            invokeMain("arg1", "0", "arg3", "11/11/1111", "", "arg6", "1/1/1111", "00:00");
+    MainMethodResult result = createFlight(airline, flightNumber, source, departDate, "", departAP,
+            destination, arriveDate, arriveTime, arriveAP);
     assertThat(result.getExitCode(), equalTo(5));
     assertThat(result.getTextWrittenToStandardError(),
             containsString("Time not in the correct HH:MM format"));
@@ -170,8 +185,8 @@ public class Project3IT extends InvokeMainTestCase {
 
   @Test
   public void timeStringHasTooManyChars() {
-    MainMethodResult result =
-            invokeMain("arg1", "0", "arg3", "11/11/1111", "111111", "arg6", "1/1/1111", "00:00");
+    MainMethodResult result = createFlight(airline, flightNumber, source, departDate, "121212", departAP,
+            destination, arriveDate, arriveTime, arriveAP);
     assertThat(result.getExitCode(), equalTo(5));
     assertThat(result.getTextWrittenToStandardError(),
             containsString("Time not in the correct HH:MM format"));
@@ -179,8 +194,8 @@ public class Project3IT extends InvokeMainTestCase {
 
   @Test
   public void hourIsLessThanOneDigitLong() {
-    MainMethodResult result =
-            invokeMain("arg1", "0", "arg3", "11/11/1111", ":0000", "arg6", "1/1/1111", "00:00");
+    MainMethodResult result = createFlight(airline, flightNumber, source, departDate, ":00", departAP,
+            destination, arriveDate, arriveTime, arriveAP);
     assertThat(result.getExitCode(), equalTo(5));
     assertThat(result.getTextWrittenToStandardError(),
             containsString("Time not in the correct HH:MM format"));
@@ -188,8 +203,8 @@ public class Project3IT extends InvokeMainTestCase {
 
   @Test
   public void hourIsGreaterThan2DigitsLong() {
-    MainMethodResult result =
-            invokeMain("arg1", "0", "arg3", "11/11/1111", "000:0", "arg6", "1/1/1111", "00:00");
+    MainMethodResult result = createFlight(airline, flightNumber, source, departDate, "122:0", departAP,
+            destination, arriveDate, arriveTime, arriveAP);
     assertThat(result.getExitCode(), equalTo(5));
     assertThat(result.getTextWrittenToStandardError(),
             containsString("Time not in the correct HH:MM format"));
@@ -197,8 +212,8 @@ public class Project3IT extends InvokeMainTestCase {
 
   @Test
   public void minutesAreGreaterThan2DigitsLong() {
-    MainMethodResult result =
-            invokeMain("arg1", "0", "arg", "11/11/1111", "0:000", "arg", "1/1/1111", "00:00");
+    MainMethodResult result = createFlight(airline, flightNumber, source, departDate, "1:000", departAP,
+            destination, arriveDate, arriveTime, arriveAP);
     assertThat(result.getExitCode(), equalTo(5));
     assertThat(result.getTextWrittenToStandardError(),
             containsString("Time not in the correct HH:MM format"));
@@ -206,8 +221,8 @@ public class Project3IT extends InvokeMainTestCase {
 
   @Test
   public void invalidArrivalDateFormat() {
-    MainMethodResult result =
-            invokeMain("arg1", "0", "arg3", "11/11/1111", "arg5", "arg6", "1//11111", "00:00");
+    MainMethodResult result = createFlight(airline, flightNumber, source, departDate, departTime, departAP, destination,
+            "1//20177", arriveTime, arriveAP);
     assertThat(result.getExitCode(), equalTo(4));
     assertThat(result.getTextWrittenToStandardError(),
             containsString("Date not in the correct MM/DD/YYYY format"));
@@ -215,8 +230,8 @@ public class Project3IT extends InvokeMainTestCase {
 
   @Test
   public void invalidArrivalTimeFormat() {
-    MainMethodResult result =
-            invokeMain("arg1", "0", "arg3", "11/11/1111", "00:00", "arg6", "1/1/1111", "0000000");
+    MainMethodResult result = createFlight(airline, flightNumber, source, departDate, departTime, departAP, destination,
+            arriveDate, "121212", arriveAP);
     assertThat(result.getExitCode(), equalTo(5));
     assertThat(result.getTextWrittenToStandardError(),
             containsString("Time not in the correct HH:MM format"));
@@ -224,8 +239,8 @@ public class Project3IT extends InvokeMainTestCase {
 
   @Test
   public void airportCodeStringEmpty() {
-    MainMethodResult result =
-            invokeMain("arg1", "0", "", "11/11/1111", "00:00", "arg6", "1/1/1111", "00:00");
+    MainMethodResult result = createFlight(airline, flightNumber, "", departDate, departTime, departAP,
+            destination, arriveDate, arriveTime, arriveAP);
     assertThat(result.getExitCode(), equalTo(6));
     assertThat(result.getTextWrittenToStandardError(),
             containsString("Airport code must be 3 letters"));
@@ -233,8 +248,8 @@ public class Project3IT extends InvokeMainTestCase {
 
   @Test
   public void airportCodeStringNotAllLetters() {
-    MainMethodResult result =
-            invokeMain("arg1", "0", "3al", "11/11/1111", "00:00", "arg", "1/1/1111", "00:00");
+    MainMethodResult result = createFlight(airline, flightNumber, "3DX", departDate, departTime, departAP,
+            destination, arriveDate, arriveTime, arriveAP);
     assertThat(result.getExitCode(), equalTo(6));
     assertThat(result.getTextWrittenToStandardError(),
             containsString("Airport code must be 3 letters"));
@@ -243,37 +258,40 @@ public class Project3IT extends InvokeMainTestCase {
   @Test
   public void readmeIsFirstArgument() {
     MainMethodResult result =
-            invokeMain("-README", "arg1", "0", "3al", "11/11/1111", "00:00", "arg", "1/1/1111", "00:00");
+            invokeMain("-README", airline, flightNumber, source, departDate, departTime, departAP, destination,
+                    arriveDate, arriveTime, arriveAP);
     assertThat(result.getExitCode(), equalTo(0));
   }
 
   @Test
   public void readmeIsSecondArgument() {
     MainMethodResult result =
-            invokeMain("-print", "-README", "arg1", "0", "3al", "11/11/1111", "00:00", "arg", "1/1/1111", "00:00");
+            invokeMain("-print", "-README", airline, flightNumber, source, departDate, departTime, departAP,
+                    destination, arriveDate, arriveTime, arriveAP);
     assertThat(result.getExitCode(), equalTo(0));
   }
 
   @Test
   public void printIsFirstArgument() {
     MainMethodResult result =
-            invokeMain("-print", "arg1", "0", "aal", "11/11/1111", "00:00", "arg", "1/1/1111", "00:00");
+            invokeMain("-print", airline, flightNumber, source, departDate, departTime, departAP, destination,
+                    arriveDate, arriveTime, arriveAP);
     assertThat(result.getExitCode(), equalTo(0));
   }
 
   @Test
   public void readmeIsThirdArgument() {
     MainMethodResult result =
-            invokeMain("-print", "-arg", "-README", "arg1", "0", "3al", "11/11/1111", "00:00", "arg",
-                    "1/1/1111", "00:00");
+            invokeMain("-print", "-arg", "-README", airline, flightNumber, source, departDate, departTime,
+                    departAP, destination, arriveDate, arriveTime, arriveAP);
     assertThat(result.getExitCode(), equalTo(0));
   }
 
   @Test
   public void airlineNotTheSameAsTextFile() {
     MainMethodResult result =
-            invokeMain("-print", "-textFile", "test.txt", "wrong",
-                    "0", "aal", "11/11/1111", "00:00", "arg", "1/1/1111", "00:00");
+            invokeMain("-print", "-textFile", "test.txt", "wrong", flightNumber, source, departDate, departTime,
+                    departAP, destination, arriveDate, arriveTime, arriveAP);
     assertThat(result.getExitCode(), equalTo(9));
     assertThat(result.getTextWrittenToStandardError(),
             containsString("Name of airline from command line"));
@@ -282,8 +300,8 @@ public class Project3IT extends InvokeMainTestCase {
   @Test
   public void fileIncorrectlyFormatted() {
     MainMethodResult result =
-            invokeMain("-print", "-textFile", "badfile.txt", "airline",
-                    "0", "aal", "11/11/1111", "00:00", "arg", "1/1/1111", "00:00");
+            invokeMain("-print", "-textFile", "badfile.txt", airline, flightNumber, source, departDate,
+                    departTime, departAP, destination, arriveDate, arriveTime, arriveAP);
     assertThat(result.getExitCode(), equalTo(8));
     assertThat(result.getTextWrittenToStandardError(), containsString("File not correctly formatted"));
   }
