@@ -75,11 +75,11 @@ public class Project3 {
     String departAirport = args[2 + argOffset].toUpperCase();
     String departDate = args[3 + argOffset];
     String departTime = args[4 + argOffset];
-    String departAPAsString = args[5 + argOffset];
+    String departAP = args[5 + argOffset];
     String arriveAirport = args[6 + argOffset].toUpperCase();
     String arriveDate = args[7 + argOffset];
     String arriveTime = args[8 + argOffset];
-    String arriveAPAsString = args[9 + argOffset];
+    String arriveAP = args[9 + argOffset];
 
     flightNumber = verifyFlightNumberIsInteger(flightNumberAsString);
 
@@ -99,15 +99,15 @@ public class Project3 {
       System.exit(5);
     }
 
-    departAPAsString = getAP(departAPAsString);
-    arriveAPAsString = getAP(arriveAPAsString);
+    departAP = getAP(departAP);
+    arriveAP = getAP(arriveAP);
 
     isAirportCodeLegal(departAirport);
     isAirportCodeLegal(arriveAirport);
 
     //Combines date and time to create single strings
-    depart = departDate + " " + departTime + " " + departAPAsString;
-    arrive = arriveDate + " " + arriveTime + " " + arriveAPAsString;
+    depart = departDate + " " + departTime + " " + departAP;
+    arrive = arriveDate + " " + arriveTime + " " + arriveAP;
 
     //Creates new instance of Airline and Flight classes and sets their data to args
     Airline airline = new Airline(args[argOffset]);
@@ -185,7 +185,8 @@ public class Project3 {
       isAirportCodeLegal(aFlightArray.getDestination());
 
       date = aFlightArray.getDepartureString().substring(0, aFlightArray.getDepartureString().indexOf(" "));
-      time = aFlightArray.getDepartureString().substring(aFlightArray.getDepartureString().indexOf(" ") + 1);
+      time = aFlightArray.getDepartureString().substring(aFlightArray.getDepartureString().indexOf(" ") + 1,
+              aFlightArray.getDepartureString().length() - 3);
 
       isDateLengthLegal(date);
       isTimeLengthLegal(time);
@@ -194,7 +195,8 @@ public class Project3 {
       }
 
       date = aFlightArray.getArrivalString().substring(0, aFlightArray.getArrivalString().indexOf(" "));
-      time = aFlightArray.getArrivalString().substring(aFlightArray.getArrivalString().indexOf(" ") + 1);
+      time = aFlightArray.getArrivalString().substring(aFlightArray.getArrivalString().indexOf(" ") + 1,
+              aFlightArray.getArrivalString().length() - 3);
 
       isDateLengthLegal(date);
       isTimeLengthLegal(time);
@@ -263,7 +265,7 @@ public class Project3 {
    *        Argument to be tested
    */
   private static void isDateLengthLegal(String arg) {
-    if (arg.length() < 8 || arg.length() > 10) {
+    if (arg.length() < 6 || arg.length() > 10) {
       System.err.println("Date not in the correct MM/DD/YYYY format");
       System.exit(3);
     }
@@ -314,14 +316,14 @@ public class Project3 {
   }
 
   /**
-   * Checks if the year in the date format is 4 chars long and all chars are numbers.
+   * Checks if the year in the date format is 4 chars long (or 2 if read from file) and all chars are numbers.
    *
    * @param arg
    *        Argument to be tested
    * @param yearStartingPosition
    *        Index of the first number of the year in the date
    * @return
-   *        Returns true if year is exactly 4 chars long and all chars are numbers
+   *        Returns true if year is exactly 4 chars long (or 2 if read from file) and all chars are numbers
    */
   private static boolean checkYearFormat(String arg, int yearStartingPosition) {
     boolean yearIsAllNumbers = true;
@@ -332,7 +334,8 @@ public class Project3 {
       }
     }
 
-    return ((arg.length() == yearStartingPosition + 4) && yearIsAllNumbers);
+    return (((arg.length() == yearStartingPosition + 4) || (arg.length() == yearStartingPosition + 2)) &&
+            yearIsAllNumbers);
   }
 
   /**

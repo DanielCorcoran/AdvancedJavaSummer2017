@@ -13,7 +13,7 @@ public class TextDumperTest {
   public void createAndWriteToAFileWhenNoneExistsOneFlight() throws IOException {
     Airline airline = new Airline("airline");
     Flight flight =
-            new Flight(1, "aaa", "depart time", "bbb", "arrive time");
+            new Flight(1, "PDX", "1/1/2017 12:00 am", "DEN", "1/1/2017 12:01 am");
     airline.addFlight(flight);
     TextDumper dumper = new TextDumper("testwrite.txt");
     dumper.dump(airline);
@@ -23,7 +23,7 @@ public class TextDumperTest {
   public void createAndWriteToAFileWhenNoneExistsTwoFlights() throws IOException {
     Airline airline = new Airline("airline");
     Flight flight =
-            new Flight(1, "aaa", "depart time", "bbb", "arrive time");
+            new Flight(1, "PDX", "1/1/2017 12:00 am", "DEN", "1/1/2017 12:01 am");
     airline.addFlight(flight);
     airline.addFlight(flight);
     TextDumper dumper = new TextDumper("testwrite.txt");
@@ -34,7 +34,7 @@ public class TextDumperTest {
   public void createAndWriteToAFileWhenOneExistsOneFlight() throws IOException {
     Airline airline = new Airline("airline");
     Flight flight =
-            new Flight(1, "aaa", "depart time", "bbb", "arrive time");
+            new Flight(1, "PDX", "1/1/2017 12:00 am", "DEN", "1/1/2017 12:01 am");
     airline.addFlight(flight);
     TextDumper dumper = new TextDumper("testwrite.txt");
     dumper.dump(airline);
