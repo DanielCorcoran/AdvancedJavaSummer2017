@@ -59,7 +59,12 @@ public class Project3 {
     }
 
     //Check for option to pretty print flights
-    //TODO make this work
+    for (int i = 0; i < OPTIONS; ++i) {
+      if (args[i].equals("-pretty")) {
+        prettyFileName = args[i + 1];
+        argOffset += 2;
+      }
+    }
 
     //Checks for maximum number of possible arguments
     if (args.length - argOffset > 10) {
@@ -155,6 +160,20 @@ public class Project3 {
       } else {
         System.err.println("Name of airline from command line does not match name of airline from text file");
         System.exit(9);
+      }
+    }
+
+    //If file name to pretty print to is valid (or -), print to the name specified
+    if (prettyFileName != null) {
+      PrettyPrinter pretty = new PrettyPrinter(prettyFileName);
+      try {
+        if (airlineFromTextFile != null) {
+          pretty.dump(airlineFromTextFile);
+        } else {
+          pretty.dump(airline);
+        }
+      } catch (IOException e) {
+        System.err.println("Can't write to file");
       }
     }
 

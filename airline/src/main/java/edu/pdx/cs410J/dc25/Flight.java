@@ -9,7 +9,7 @@ import java.util.Date;
 
 /**
  * The <code>Flight</code> class extends the <code>AbstractFlight</code> class and implements the abstract methods
- * found there.
+ * found there.  The Comparable interface has also been implemented to allow for the comparison of flights.
  * This class has unique flight data for each object instantiated that is tied to an airline in the
  * {@link Airline} class.
  */
