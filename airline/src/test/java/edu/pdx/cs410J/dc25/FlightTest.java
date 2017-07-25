@@ -93,4 +93,49 @@ public class FlightTest {
             "1/1/2017 12:01 am");
     assertThat(flight.getArrivalString(), is("1/1/17 12:01 AM"));
   }
+
+  @Test
+  public void whenFlightOneDepartAirportIsLessThanFlight2Negative1IsReturned() {
+    Flight flight1 = new Flight(2112, "DEN", "11/11/2017 12:00 am", "PDX",
+            "11/11/2017 12:01 am");
+    Flight flight2 = new Flight(2112, "PDX", "11/11/2017 12:00 am", "DEN",
+            "11/11/2017 12:01 am");
+    assertThat(flight1.compareTo(flight2), is(-1));
+  }
+
+  @Test
+  public void whenFlightOneDepartAirportIsGreaterThanFlight2Positive1IsReturned() {
+    Flight flight1 = new Flight(2112, "PDX", "11/11/2017 12:00 am", "DEN",
+            "11/11/2017 12:01 am");
+    Flight flight2 = new Flight(2112, "DEN", "11/11/2017 12:00 am", "PDX",
+            "11/11/2017 12:01 am");
+    assertThat(flight1.compareTo(flight2), is(1));
+  }
+
+  @Test
+  public void whenFlightOneDepartTimeIsLessThanFlight2Negative1IsReturned() {
+    Flight flight1 = new Flight(2112, "PDX", "11/11/2017 12:00 am", "DEN",
+            "11/11/2017 12:01 am");
+    Flight flight2 = new Flight(2112, "PDX", "11/11/2017 12:01 am", "DEN",
+            "11/11/2017 12:02 am");
+    assertThat(flight1.compareTo(flight2), is(-1));
+  }
+
+  @Test
+  public void whenFlightOneDepartTimeIsGreaterThanFlight2Positive1IsReturned() {
+    Flight flight1 = new Flight(2112, "PDX", "11/11/2017 12:01 am", "DEN",
+            "11/11/2017 12:02 am");
+    Flight flight2 = new Flight(2112, "PDX", "11/11/2017 12:00 am", "DEN",
+            "11/11/2017 12:01 am");
+    assertThat(flight1.compareTo(flight2), is(1));
+  }
+
+  @Test
+  public void whenFlightsAreEqual0IsReturned() {
+    Flight flight1 = new Flight(2112, "PDX", "11/11/2017 12:00 am", "DEN",
+            "11/11/2017 12:01 am");
+    Flight flight2 = new Flight(2112, "PDX", "11/11/2017 12:00 am", "DEN",
+            "11/11/2017 12:01 am");
+    assertThat(flight1.compareTo(flight2), is(0));
+  }
 }

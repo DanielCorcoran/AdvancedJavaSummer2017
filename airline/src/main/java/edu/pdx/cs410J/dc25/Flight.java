@@ -13,7 +13,7 @@ import java.util.Date;
  * This class has unique flight data for each object instantiated that is tied to an airline in the
  * {@link Airline} class.
  */
-public class Flight extends AbstractFlight {
+public class Flight extends AbstractFlight implements Comparable<Flight> {
   private int flightNumber;
   private String source;
   private String destination;
@@ -116,5 +116,30 @@ public class Flight extends AbstractFlight {
     }
 
     return arriveAsDate;
+  }
+
+  /**
+   * Compares the <code>Flight</code> to another <code>Flight</code>.  Checks for equality and facilitates sorting.
+   *
+   * @param toCompare
+   *        <code>Flight</code> to compare with this flight
+   * @return
+   *        Returns -1, 0, or 1 if this flight is less than, equal to, or greater than
+   *        the flight to compare, respectively
+   */
+  public int compareTo(Flight toCompare) {
+    if (this.source.compareTo(toCompare.source) < 0) {
+      return -1;
+    } else if (this.source.compareTo(toCompare.source) > 0) {
+      return 1;
+    } else {
+      if (this.getDeparture().compareTo(toCompare.getDeparture()) < 0) {
+        return -1;
+      } else if (this.getDeparture().compareTo(toCompare.getDeparture()) > 0) {
+        return 1;
+      } else {
+        return 0;
+      }
+    }
   }
 }
