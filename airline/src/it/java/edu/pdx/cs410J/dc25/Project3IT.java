@@ -32,7 +32,8 @@ public class Project3IT extends InvokeMainTestCase {
   private MainMethodResult createFlight(String airline, String flightNumber, String source, String departDate,
                                         String departTime, String departAP, String destination, String arriveDate,
                                         String arriveTime, String arriveAP) {
-    return invokeMain(airline, flightNumber, source, departDate, departTime, departAP, destination, arriveDate, arriveTime, arriveAP);
+    return invokeMain(airline, flightNumber, source, departDate, departTime, departAP, destination, arriveDate,
+            arriveTime, arriveAP);
   }
 
   /**
@@ -304,5 +305,22 @@ public class Project3IT extends InvokeMainTestCase {
                     departTime, departAP, destination, arriveDate, arriveTime, arriveAP);
     assertThat(result.getExitCode(), equalTo(8));
     assertThat(result.getTextWrittenToStandardError(), containsString("File not correctly formatted"));
+  }
+
+  @Test
+  public void arriveAMPMincorrectlyFormatted() {
+    MainMethodResult result = createFlight(airline, flightNumber, source, departDate, departTime, "wrong",
+            destination, arriveDate, arriveTime, arriveAP);
+    assertThat(result.getExitCode(), equalTo(10));
+    assertThat(result.getTextWrittenToStandardError(), containsString("am/pm must be lower case"));
+  }
+
+  @Test
+  public void airportCodeStringNotInListOfNames() {
+    MainMethodResult result = createFlight(airline, flightNumber, "AAA", departDate, departTime, departAP,
+            destination, arriveDate, arriveTime, arriveAP);
+    assertThat(result.getExitCode(), equalTo(6));
+    assertThat(result.getTextWrittenToStandardError(),
+            containsString("Airport code must be 3 letters and match an existing airport"));
   }
 }

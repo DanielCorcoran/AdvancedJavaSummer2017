@@ -2,6 +2,8 @@ package edu.pdx.cs410J.dc25;
 
 import edu.pdx.cs410J.AbstractFlight;
 
+import java.util.Date;
+
 /**
  * The <code>Flight</code> class extends the <code>AbstractFlight</code> class and implements the abstract methods
  * found there.
@@ -76,4 +78,16 @@ public class Flight extends AbstractFlight {
   public String getArrivalString() {
     return this.arrival;
   }
+
+  /*
+  @Override
+  public Date getDeparture() {
+    return
+  }
+
+  @Override
+  public Date getArrival() {
+    return
+  }
+  */
 }

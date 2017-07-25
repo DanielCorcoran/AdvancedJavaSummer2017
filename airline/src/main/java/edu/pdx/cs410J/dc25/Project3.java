@@ -1,5 +1,6 @@
 package edu.pdx.cs410J.dc25;
 
+import edu.pdx.cs410J.AirportNames;
 import edu.pdx.cs410J.ParserException;
 
 import java.io.File;
@@ -71,12 +72,14 @@ public class Project3 {
     }
 
     String flightNumberAsString = args[1 + argOffset];
-    String departAirport = args[2 + argOffset];
+    String departAirport = args[2 + argOffset].toUpperCase();
     String departDate = args[3 + argOffset];
     String departTime = args[4 + argOffset];
-    String arriveAirport = args[6 + argOffset];
+    String departAPAsString = args[5 + argOffset];
+    String arriveAirport = args[6 + argOffset].toUpperCase();
     String arriveDate = args[7 + argOffset];
     String arriveTime = args[8 + argOffset];
+    String arriveAPAsString = args[9 + argOffset];
 
     flightNumber = verifyFlightNumberIsInteger(flightNumberAsString);
 
@@ -96,12 +99,15 @@ public class Project3 {
       System.exit(5);
     }
 
+    departAPAsString = getAP(departAPAsString);
+    arriveAPAsString = getAP(arriveAPAsString);
+
     isAirportCodeLegal(departAirport);
     isAirportCodeLegal(arriveAirport);
 
     //Combines date and time to create single strings
-    depart = departDate + " " + departTime;
-    arrive = arriveDate + " " + arriveTime;
+    depart = departDate + " " + departTime + " " + departAPAsString;
+    arrive = arriveDate + " " + arriveTime + " " + arriveAPAsString;
 
     //Creates new instance of Airline and Flight classes and sets their data to args
     Airline airline = new Airline(args[argOffset]);
@@ -201,15 +207,38 @@ public class Project3 {
   }
 
   /**
-   * Checks if an airport code is 3 chars and all chars are letters
+   * Checks the command line argument for am or pm.  Gives an error and exits the program gracefully if neither am or pm
+   * are found.
+   *
+   * @param arg
+   *        am/pm argument from command line
+   * @return
+   *        Returns 1 if am and 2 if pm.  Otherwise prints an error and exits.
+   */
+  private static String getAP(String arg) {
+    switch (arg) {
+      case "am":
+        return "am";
+      case "pm":
+        return "pm";
+      default:
+        System.err.println("am/pm must be lower case and contain only the characters am or pm");
+        System.exit(10);
+    }
+    return null;
+  }
+
+  /**
+   * Checks if an airport code is 3 chars, all chars are letters, and code is a real airport
    *
    * @param arg
    *        Argument to be tested
    */
   private static void isAirportCodeLegal(String arg) {
     if (!(arg.length() == 3 && (Character.isLetter(arg.charAt(0)) &&
-            Character.isLetter(arg.charAt(1)) && Character.isLetter(arg.charAt(2))))) {
-      System.err.println("Airport code must be 3 letters");
+            Character.isLetter(arg.charAt(1)) && Character.isLetter(arg.charAt(2))) &&
+            AirportNames.getNamesMap().containsKey(arg))) {
+      System.err.println("Airport code must be 3 letters and match an existing airport");
       System.exit(6);
     }
   }
