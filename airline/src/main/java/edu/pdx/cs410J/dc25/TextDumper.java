@@ -6,6 +6,7 @@ import edu.pdx.cs410J.AirlineDumper;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 
 /**
  * The <code>TextDumper</code> class takes the {@link Airline} and all of its associated {@link Flight} in the program
@@ -57,7 +58,9 @@ public class TextDumper implements AirlineDumper {
    * @return Returns flight data as a string
    */
   private String createFlightInfoString(Flight flight) {
-    return String.valueOf(flight.getNumber()) + "|" + flight.getSource() + "|" + flight.getDepartureString() + "|" +
-            flight.getDestination() + "|" + flight.getArrivalString() + "|";
+    SimpleDateFormat df = new SimpleDateFormat("MM/dd/yyyy hh:mm a");
+
+    return String.valueOf(flight.getNumber()) + "|" + flight.getSource() + "|" + df.format(flight.getDeparture()) +
+            "|" + flight.getDestination() + "|" + df.format(flight.getArrival()) + "|";
   }
 }

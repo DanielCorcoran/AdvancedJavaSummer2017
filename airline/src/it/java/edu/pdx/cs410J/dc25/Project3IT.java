@@ -3,6 +3,12 @@ package edu.pdx.cs410J.dc25;
 import edu.pdx.cs410J.InvokeMainTestCase;
 import org.junit.Test;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.util.stream.Stream;
+
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -34,6 +40,15 @@ public class Project3IT extends InvokeMainTestCase {
                                         String arriveTime, String arriveAP) {
     return invokeMain(airline, flightNumber, source, departDate, departTime, departAP, destination, arriveDate,
             arriveTime, arriveAP);
+  }
+
+  private String readFile(File file) throws FileNotFoundException {
+    BufferedReader br = new BufferedReader(new FileReader(file));
+    StringBuilder sb = new StringBuilder();
+    Stream<String> lines = br.lines();
+    lines.forEach(line -> sb.append(line).append("\n"));
+
+    return sb.toString();
   }
 
   /**
@@ -322,5 +337,39 @@ public class Project3IT extends InvokeMainTestCase {
     assertThat(result.getExitCode(), equalTo(6));
     assertThat(result.getTextWrittenToStandardError(),
             containsString("Airport code must be 3 letters and match an existing airport"));
+  }
+
+  @Test
+  public void prettyPrintsToStdOutWhenDashIsArgument() {
+    MainMethodResult result = invokeMain("-pretty", "-", airline, flightNumber, source, departDate,
+            departTime, departAP, destination, arriveDate, arriveTime, arriveAP);
+    assertThat(result.getExitCode(), equalTo(null));
+    assertThat(result.getTextWrittenToStandardOut(), containsString("Flights for airline"));
+  }
+
+  @Test
+  public void prettyAndPrintArgsBothPrintToStdOutWhenDashIsAnArgument() {
+    MainMethodResult result = invokeMain("-pretty", "-", "-print", airline, flightNumber, source, departDate,
+            departTime, departAP, destination, arriveDate, arriveTime, arriveAP);
+    assertThat(result.getExitCode(), equalTo(0));
+    assertThat(result.getTextWrittenToStandardOut(), containsString("Flights for airline"));
+    assertThat(result.getTextWrittenToStandardOut(), containsString("Flight " + flightNumber));
+  }
+
+  @Test
+  public void prettyPrintsFileToStdOutWhenTextFileIsAnArgument() {
+    MainMethodResult result = invokeMain("-pretty", "-", "-textFile", "testwrite.txt", airline, flightNumber, source, departDate,
+            departTime, departAP, destination, arriveDate, arriveTime, arriveAP);
+    assertThat(result.getExitCode(), equalTo(null));
+    assertThat(result.getTextWrittenToStandardOut(), containsString("Flight number 555"));
+  }
+
+  @Test
+  public void prettyPrintsToPrettyFile() throws FileNotFoundException {
+    File airlineFile = new File("prettytestwrite.txt");
+    invokeMain("-pretty", "prettytestwrite.txt", airline, flightNumber, source, departDate,
+            departTime, departAP, destination, arriveDate, arriveTime, arriveAP);
+    String fileContents = readFile(airlineFile);
+    assertThat(fileContents, containsString("555"));
   }
 }
