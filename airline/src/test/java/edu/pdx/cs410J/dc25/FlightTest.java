@@ -2,6 +2,8 @@ package edu.pdx.cs410J.dc25;
 
 import org.junit.Test;
 
+import java.text.DateFormat;
+
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -49,49 +51,49 @@ public class FlightTest {
   public void getDateStringReturnsShortDateAndTime() {
     Flight flight = new Flight(2112, "PDX", "11/11/2017 12:00 am", "DEN",
             "11/11/2017 12:01 am");
-    assertThat(flight.getDepartureString(), equalTo("11/11/17 12:00 AM"));
+    assertThat(flight.getDepartureString(), is(DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(flight.getDeparture())));
   }
 
   @Test
   public void getDepartureParsesSingleDigitMonthsCorrectly() {
     Flight flight = new Flight(2112, "PDX", "1/11/2017 12:00 am", "DEN",
             "11/11/2017 12:01 am");
-    assertThat(flight.getDepartureString(), equalTo("1/11/17 12:00 AM"));
+    assertThat(flight.getDepartureString(), is(DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(flight.getDeparture())));
   }
 
   @Test
   public void getDepartureParsesSingleDigitDaysCorrectly() {
     Flight flight = new Flight(2112, "PDX", "11/1/2017 12:00 am", "DEN",
             "11/11/2017 12:01 am");
-    assertThat(flight.getDepartureString(), equalTo("11/1/17 12:00 AM"));
+    assertThat(flight.getDepartureString(), is(DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(flight.getDeparture())));
   }
 
   @Test
   public void getDepartureParsesSingleDigitDaysAndMonthsTogether() {
     Flight flight = new Flight(2112, "PDX", "1/1/2017 12:00 am", "DEN",
             "11/11/2017 12:01 am");
-    assertThat(flight.getDepartureString(), equalTo("1/1/17 12:00 AM"));
+    assertThat(flight.getDepartureString(), is(DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(flight.getDeparture())));
   }
 
   @Test
   public void getArrivalParsesSingleDigitMonthsCorrectly() {
     Flight flight = new Flight(2112, "PDX", "11/11/2017 12:00 am", "DEN",
             "1/11/2017 12:01 am");
-    assertThat(flight.getArrivalString(), equalTo("1/11/17 12:01 AM"));
+    assertThat(flight.getArrivalString(), is(DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(flight.getDeparture())));
   }
 
   @Test
   public void getArrivalParsesSingleDigitDaysCorrectly() {
     Flight flight = new Flight(2112, "PDX", "11/11/2017 12:00 am", "DEN",
             "11/1/2017 12:01 am");
-    assertThat(flight.getArrivalString(), equalTo("11/1/17 12:01 AM"));
+    assertThat(flight.getArrivalString(), is(DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(flight.getDeparture())));
   }
 
   @Test
   public void getArrivalParsesSingleDigitDaysAndMonthsTogether() {
     Flight flight = new Flight(2112, "PDX", "11/11/2017 12:00 am", "DEN",
             "1/1/2017 12:01 am");
-    assertThat(flight.getArrivalString(), equalTo("1/1/17 12:01 AM"));
+    assertThat(flight.getArrivalString(), is(DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(flight.getDeparture())));
   }
 
   @Test
