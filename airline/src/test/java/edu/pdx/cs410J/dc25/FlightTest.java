@@ -49,49 +49,49 @@ public class FlightTest {
   public void getDateStringReturnsShortDateAndTime() {
     Flight flight = new Flight(2112, "PDX", "11/11/2017 12:00 am", "DEN",
             "11/11/2017 12:01 am");
-    assertThat(flight.getDepartureString(), is("11/11/2017 12:00 AM"));
+    assertThat(flight.getDepartureString(), is("11/11/17 12:00 AM"));
   }
 
   @Test
   public void getDepartureParsesSingleDigitMonthsCorrectly() {
     Flight flight = new Flight(2112, "PDX", "1/11/2017 12:00 am", "DEN",
             "11/11/2017 12:01 am");
-    assertThat(flight.getDepartureString(), is("1/11/2017 12:00 AM"));
+    assertThat(flight.getDepartureString(), is("1/11/17 12:00 AM"));
   }
 
   @Test
   public void getDepartureParsesSingleDigitDaysCorrectly() {
     Flight flight = new Flight(2112, "PDX", "11/1/2017 12:00 am", "DEN",
             "11/11/2017 12:01 am");
-    assertThat(flight.getDepartureString(), is("11/1/2017 12:00 AM"));
+    assertThat(flight.getDepartureString(), is("11/1/17 12:00 AM"));
   }
 
   @Test
   public void getDepartureParsesSingleDigitDaysAndMonthsTogether() {
     Flight flight = new Flight(2112, "PDX", "1/1/2017 12:00 am", "DEN",
             "11/11/2017 12:01 am");
-    assertThat(flight.getDepartureString(), is("1/1/2017 12:00 AM"));
+    assertThat(flight.getDepartureString(), is("1/1/17 12:00 AM"));
   }
 
   @Test
   public void getArrivalParsesSingleDigitMonthsCorrectly() {
     Flight flight = new Flight(2112, "PDX", "11/11/2017 12:00 am", "DEN",
             "1/11/2017 12:01 am");
-    assertThat(flight.getArrivalString(), is("1/11/2017 12:01 AM"));
+    assertThat(flight.getArrivalString(), is("1/11/17 12:01 AM"));
   }
 
   @Test
   public void getArrivalParsesSingleDigitDaysCorrectly() {
     Flight flight = new Flight(2112, "PDX", "11/11/2017 12:00 am", "DEN",
             "11/1/2017 12:01 am");
-    assertThat(flight.getArrivalString(), is("11/1/2017 12:01 AM"));
+    assertThat(flight.getArrivalString(), is("11/1/17 12:01 AM"));
   }
 
   @Test
   public void getArrivalParsesSingleDigitDaysAndMonthsTogether() {
     Flight flight = new Flight(2112, "PDX", "11/11/2017 12:00 am", "DEN",
             "1/1/2017 12:01 am");
-    assertThat(flight.getArrivalString(), is("1/1/2017 12:01 AM"));
+    assertThat(flight.getArrivalString(), is("1/1/17 12:01 AM"));
   }
 
   @Test
@@ -122,20 +122,11 @@ public class FlightTest {
   }
 
   @Test
-  public void whenFlightOneDepartTimeIsGreaterThanFlight2Positive1IsReturned() {
-    Flight flight1 = new Flight(2112, "PDX", "11/11/2017 12:01 am", "DEN",
-            "11/11/2017 12:02 am");
-    Flight flight2 = new Flight(2112, "PDX", "11/11/2017 12:00 am", "DEN",
-            "11/11/2017 12:01 am");
-    assertThat(flight1.compareTo(flight2), is(1));
-  }
-
-  @Test
-  public void whenFlightsAreEqual0IsReturned() {
+  public void whenFlightOneDepartTimeIsGreaterThanFlight21IsReturned() {
     Flight flight1 = new Flight(2112, "PDX", "11/11/2017 12:00 am", "DEN",
             "11/11/2017 12:01 am");
-    Flight flight2 = new Flight(2112, "PDX", "11/11/2017 12:00 am", "DEN",
-            "11/11/2017 12:01 am");
-    assertThat(flight1.compareTo(flight2), is(0));
+    Flight flight2 = new Flight(2112, "PDX", "11/11/2017 12:01 am", "DEN",
+            "11/11/2017 12:02 am");
+    assertThat(flight1.compareTo(flight2), is(-1));
   }
 }
