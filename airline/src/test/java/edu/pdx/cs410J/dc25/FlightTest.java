@@ -14,16 +14,16 @@ public class FlightTest {
   
   @Test
   public void getArrivalStringReturnsTheArrivalTimePassedInToTheConstructor() {
-    String arrival = "1/1/17 12:00 AM";
+    String arrival = "1/1/2017 12:00 AM";
     Flight flight = new Flight(0, null, null, null, arrival);
-    assertThat(flight.getArrivalString(), equalTo(arrival));
+    assertThat(flight.getArrivalString(), equalTo(DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(flight.getArrival())));
   }
 
   @Test
   public void getDepartureStringReturnsTheDepartureTimePassedInToTheConstructor() {
     String depart = "1/1/17 12:00 AM";
     Flight flight = new Flight(0, null, depart, null, null);
-    assertThat(flight.getDepartureString(), equalTo(depart));
+    assertThat(flight.getDepartureString(), equalTo(DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(flight.getDeparture())));
   }
 
   @Test
@@ -79,21 +79,21 @@ public class FlightTest {
   public void getArrivalParsesSingleDigitMonthsCorrectly() {
     Flight flight = new Flight(2112, "PDX", "11/11/2017 12:00 am", "DEN",
             "1/11/2017 12:01 am");
-    assertThat(flight.getArrivalString(), is(DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(flight.getDeparture())));
+    assertThat(flight.getArrivalString(), is(DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(flight.getArrival())));
   }
 
   @Test
   public void getArrivalParsesSingleDigitDaysCorrectly() {
     Flight flight = new Flight(2112, "PDX", "11/11/2017 12:00 am", "DEN",
             "11/1/2017 12:01 am");
-    assertThat(flight.getArrivalString(), is(DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(flight.getDeparture())));
+    assertThat(flight.getArrivalString(), is(DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(flight.getArrival())));
   }
 
   @Test
   public void getArrivalParsesSingleDigitDaysAndMonthsTogether() {
     Flight flight = new Flight(2112, "PDX", "11/11/2017 12:00 am", "DEN",
             "1/1/2017 12:01 am");
-    assertThat(flight.getArrivalString(), is(DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(flight.getDeparture())));
+    assertThat(flight.getArrivalString(), is(DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(flight.getArrival())));
   }
 
   @Test
