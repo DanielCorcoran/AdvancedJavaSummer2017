@@ -308,7 +308,7 @@ public class Project3IT extends InvokeMainTestCase {
   }
 
   @Test
-  public void arriveAMPMincorrectlyFormatted() {
+  public void arriveAMPMIncorrectlyFormatted() {
     MainMethodResult result = createFlight(airline, flightNumber, source, departDate, departTime, "wrong",
             destination, arriveDate, arriveTime, arriveAP);
     assertThat(result.getExitCode(), equalTo(10));

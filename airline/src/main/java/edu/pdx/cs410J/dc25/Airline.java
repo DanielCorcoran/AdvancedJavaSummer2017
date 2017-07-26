@@ -33,14 +33,25 @@ public class Airline extends AbstractAirline<Flight> {
   }
 
   /**
-   * Adds a flight to the list of <code>flights</code>
+   * Adds a flight to the list of <code>flights</code> if it is unique
    *
    * @param flight
-   *        list of flights for the airline
+   *        flight to add to the airline
    */
   @Override
   public void addFlight(Flight flight) {
-    this.flights.add(flight);
+    boolean toAdd = true;
+    Flight[] flightArray = flights.toArray(new Flight[flights.size()]);
+
+    for (int i = 0; i < flights.size(); ++i) {
+      if (flight.compareTo(flightArray[i]) == 0) {
+        toAdd = false;
+      }
+    }
+
+    if (toAdd) {
+      this.flights.add(flight);
+    }
   }
 
   /**

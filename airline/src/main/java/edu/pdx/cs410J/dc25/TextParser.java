@@ -35,7 +35,7 @@ public class TextParser implements AirlineParser{
       readIn.useDelimiter("\\|");                  //Uses the pipe as a delimiter
 
       String line = readIn.nextLine();             //Reads a line and splits it at each pipe,
-      String [] part = line.split("\\|");     //then creates a variable for each split
+      String [] part = line.split("\\|");    //then creates a variable for each split
 
       Airline airline = new Airline(part[0]);
       int flightNumber = Integer.valueOf(part[1]);

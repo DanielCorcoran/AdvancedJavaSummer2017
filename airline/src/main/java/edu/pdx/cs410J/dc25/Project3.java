@@ -199,29 +199,33 @@ public class Project3 {
 
     Flight[] flightArray = airline.getFlights().toArray(new Flight[airline.getFlights().size()]);
 
-    for (Flight aFlightArray : flightArray) {
-      isAirportCodeLegal(aFlightArray.getSource());
-      isAirportCodeLegal(aFlightArray.getDestination());
+    try {
+      for (Flight aFlightArray : flightArray) {
+        isAirportCodeLegal(aFlightArray.getSource());
+        isAirportCodeLegal(aFlightArray.getDestination());
 
-      date = aFlightArray.getDepartureString().substring(0, aFlightArray.getDepartureString().indexOf(" "));
-      time = aFlightArray.getDepartureString().substring(aFlightArray.getDepartureString().indexOf(" ") + 1,
-              aFlightArray.getDepartureString().length() - 3);
+        date = aFlightArray.getDepartureString().substring(0, aFlightArray.getDepartureString().indexOf(" "));
+        time = aFlightArray.getDepartureString().substring(aFlightArray.getDepartureString().indexOf(" ") + 1,
+                aFlightArray.getDepartureString().length() - 3);
 
-      isDateLengthLegal(date);
-      isTimeLengthLegal(time);
-      if (!verifyDateFormat(date) || !verifyTimeFormat(time)) {
-        formatIsCorrect = false;
+        isDateLengthLegal(date);
+        isTimeLengthLegal(time);
+        if (!verifyDateFormat(date) || !verifyTimeFormat(time)) {
+          formatIsCorrect = false;
+        }
+
+        date = aFlightArray.getArrivalString().substring(0, aFlightArray.getArrivalString().indexOf(" "));
+        time = aFlightArray.getArrivalString().substring(aFlightArray.getArrivalString().indexOf(" ") + 1,
+                aFlightArray.getArrivalString().length() - 3);
+
+        isDateLengthLegal(date);
+        isTimeLengthLegal(time);
+        if (!verifyDateFormat(date) || !verifyTimeFormat(time)) {
+          formatIsCorrect = false;
+        }
       }
-
-      date = aFlightArray.getArrivalString().substring(0, aFlightArray.getArrivalString().indexOf(" "));
-      time = aFlightArray.getArrivalString().substring(aFlightArray.getArrivalString().indexOf(" ") + 1,
-              aFlightArray.getArrivalString().length() - 3);
-
-      isDateLengthLegal(date);
-      isTimeLengthLegal(time);
-      if (!verifyDateFormat(date) || !verifyTimeFormat(time)) {
-        formatIsCorrect = false;
-      }
+    } catch (NullPointerException e) {
+      return false;
     }
 
     return formatIsCorrect;
