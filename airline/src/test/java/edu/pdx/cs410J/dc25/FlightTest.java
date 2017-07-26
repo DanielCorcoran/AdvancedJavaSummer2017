@@ -49,49 +49,49 @@ public class FlightTest {
   public void getDateStringReturnsShortDateAndTime() {
     Flight flight = new Flight(2112, "PDX", "11/11/2017 12:00 am", "DEN",
             "11/11/2017 12:01 am");
-    assertThat(flight.getDepartureString(), is("11/11/17 12:00 AM"));
+    assertThat(flight.getDepartureString(), equalTo("11/11/17 12:00 AM"));
   }
 
   @Test
   public void getDepartureParsesSingleDigitMonthsCorrectly() {
     Flight flight = new Flight(2112, "PDX", "1/11/2017 12:00 am", "DEN",
             "11/11/2017 12:01 am");
-    assertThat(flight.getDepartureString(), is("1/11/17 12:00 AM"));
+    assertThat(flight.getDepartureString(), equalTo("1/11/17 12:00 AM"));
   }
 
   @Test
   public void getDepartureParsesSingleDigitDaysCorrectly() {
     Flight flight = new Flight(2112, "PDX", "11/1/2017 12:00 am", "DEN",
             "11/11/2017 12:01 am");
-    assertThat(flight.getDepartureString(), is("11/1/17 12:00 AM"));
+    assertThat(flight.getDepartureString(), equalTo("11/1/17 12:00 AM"));
   }
 
   @Test
   public void getDepartureParsesSingleDigitDaysAndMonthsTogether() {
     Flight flight = new Flight(2112, "PDX", "1/1/2017 12:00 am", "DEN",
             "11/11/2017 12:01 am");
-    assertThat(flight.getDepartureString(), is("1/1/17 12:00 AM"));
+    assertThat(flight.getDepartureString(), equalTo("1/1/17 12:00 AM"));
   }
 
   @Test
   public void getArrivalParsesSingleDigitMonthsCorrectly() {
     Flight flight = new Flight(2112, "PDX", "11/11/2017 12:00 am", "DEN",
             "1/11/2017 12:01 am");
-    assertThat(flight.getArrivalString(), is("1/11/17 12:01 AM"));
+    assertThat(flight.getArrivalString(), equalTo("1/11/17 12:01 AM"));
   }
 
   @Test
   public void getArrivalParsesSingleDigitDaysCorrectly() {
     Flight flight = new Flight(2112, "PDX", "11/11/2017 12:00 am", "DEN",
             "11/1/2017 12:01 am");
-    assertThat(flight.getArrivalString(), is("11/1/17 12:01 AM"));
+    assertThat(flight.getArrivalString(), equalTo("11/1/17 12:01 AM"));
   }
 
   @Test
   public void getArrivalParsesSingleDigitDaysAndMonthsTogether() {
     Flight flight = new Flight(2112, "PDX", "11/11/2017 12:00 am", "DEN",
             "1/1/2017 12:01 am");
-    assertThat(flight.getArrivalString(), is("1/1/17 12:01 AM"));
+    assertThat(flight.getArrivalString(), equalTo("1/1/17 12:01 AM"));
   }
 
   @Test
