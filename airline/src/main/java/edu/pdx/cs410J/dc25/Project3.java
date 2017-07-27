@@ -147,7 +147,7 @@ public class Project3 {
     }
 
     //If the airline info was stored from the file, compare name to name of airline passed in from command line.
-    //If equal, add flight from command line to airline and dump back to file. Comment
+    //If equal, add flight from command line to airline and dump back to file.
     if (airlineFromTextFile != null) {
       if (airlineFromTextFile.getName().compareTo(airline.getName()) == 0) {
         airlineFromTextFile.addFlight(flight);
