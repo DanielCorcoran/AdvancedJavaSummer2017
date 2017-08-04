@@ -34,7 +34,7 @@ public class AirlineRestClientIT {
     AirlineRestClient client = newAirlineRestClient();
 
     String airlineName = "My Airline";
-    Flight flight = new Flight(123,"PDX", "1/1/2017 12:00 AM", "LAX", "1/1/2017 12:30 AM");
+    Flight flight = new Flight(123,"PDX", "1/1/2017 12:00 am", "LAX", "1/1/2017 12:30 am");
     client.addFlightToServer(airlineName, flight);
   }
 
@@ -43,8 +43,8 @@ public class AirlineRestClientIT {
     AirlineRestClient client = newAirlineRestClient();
 
     String airlineName = "My Airline";
-    client.addFlightToServer(airlineName, new Flight(234, "PDX", "1/1/2017 12:01 AM", "LAS", "1/1/2017 12:30 AM"));
-    client.addFlightToServer(airlineName, new Flight(345, "PDX", "1/1/2017 12:02 AM", "LAX", "1/1/2017 12:30 AM"));
+    client.addFlightToServer(airlineName, new Flight(234, "PDX", "1/1/2017 12:01 am", "LAS", "1/1/2017 12:30 am"));
+    client.addFlightToServer(airlineName, new Flight(345, "PDX", "1/1/2017 12:02 am", "LAX", "1/1/2017 12:30 am"));
   }
 
   @Test
@@ -59,5 +59,4 @@ public class AirlineRestClientIT {
     assertThat(pretty, not(containsString("LAS")));
 
   }
-
 }
