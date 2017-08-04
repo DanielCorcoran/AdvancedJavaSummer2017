@@ -53,6 +53,11 @@ public class AirlineRestClient extends HttpRequestHelper
       throwExceptionIfNotOkayHttpStatus(response);
     }
 
+    void removeAirline() throws IOException {
+      Response response = delete(this.url);
+      throwExceptionIfNotOkayHttpStatus(response);
+    }
+
     /**
      * Returns all keys and values from the server
      */
@@ -77,7 +82,7 @@ public class AirlineRestClient extends HttpRequestHelper
     }
 
     @VisibleForTesting
-    Response postToMyURL(String... keysAndValues) throws IOException {
+    private Response postToMyURL(String... keysAndValues) throws IOException {
       return post(this.url, keysAndValues);
     }
 

@@ -1,17 +1,14 @@
 package edu.pdx.cs410J.dc25;
 
-import edu.pdx.cs410J.web.HttpRequestHelper.Response;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.not;
 
 /**
  * Integration test that tests the REST calls made by {@link AirlineRestClient}
@@ -27,34 +24,40 @@ public class AirlineRestClientIT {
   }
 
   @Test
-  public void test0RemoveAllMappings() throws IOException {
+  public void test0RemoveAirline() throws IOException {
     AirlineRestClient client = newAirlineRestClient();
-    client.removeAllMappings();
+    client.removeAirline();
   }
 
   @Test
-  public void test1EmptyServerContainsNoMappings() throws IOException {
+  public void test1AddOneFlight() throws IOException {
     AirlineRestClient client = newAirlineRestClient();
-    Map<String, String> allKeysAndValues = client.getAllKeysAndValues();
-    assertThat(allKeysAndValues.size(), equalTo(0));
+
+    String airlineName = "My Airline";
+    Flight flight = new Flight(123,"PDX", "1/1/2017 12:00 AM", "LAX", "1/1/2017 12:30 AM");
+    client.addFlightToServer(airlineName, flight);
   }
 
   @Test
-  public void test2AddOneKeyValuePair() throws IOException {
+  public void test2AddMoreFlights() throws IOException {
     AirlineRestClient client = newAirlineRestClient();
-    String testKey = "TEST KEY";
-    String testValue = "TEST VALUE";
-    client.addKeyValuePair(testKey, testValue);
 
-    String value = client.getValue(testKey);
-    assertThat(value, equalTo(testValue));
+    String airlineName = "My Airline";
+    client.addFlightToServer(airlineName, new Flight(234, "PDX", "1/1/2017 12:01 AM", "LAS", "1/1/2017 12:30 AM"));
+    client.addFlightToServer(airlineName, new Flight(345, "PDX", "1/1/2017 12:02 AM", "LAX", "1/1/2017 12:30 AM"));
   }
 
   @Test
-  public void test4MissingRequiredParameterReturnsPreconditionFailed() throws IOException {
+  public void test3PrettyPrintFlightsFromPDXToLAX() throws IOException {
     AirlineRestClient client = newAirlineRestClient();
-    Response response = client.postToMyURL();
-    assertThat(response.getContent(), containsString(Messages.missingRequiredParameter("key")));
-    assertThat(response.getCode(), equalTo(HttpURLConnection.HTTP_PRECON_FAILED));
+
+    String airlineName = "My Airline";
+    String pretty = client.searchForFlights(airlineName, "PDX", "LAX");
+
+    assertThat(pretty, containsString("123"));
+    assertThat(pretty, containsString("345"));
+    assertThat(pretty, not(containsString("LAS")));
+
   }
+
 }

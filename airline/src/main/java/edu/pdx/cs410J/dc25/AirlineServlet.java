@@ -162,21 +162,22 @@ public class AirlineServlet extends HttpServlet {
    * behavior is exposed for testing purposes only.  It's probably not
    * something that you'd want a real application to expose.
    */
-  /*
   @Override
   protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     response.setContentType("text/plain");
 
+    this.airline = null;
+    /*
     this.data.clear();
 
     PrintWriter pw = response.getWriter();
     pw.println(Messages.allMappingsDeleted());
     pw.flush();
+    */
 
     response.setStatus(HttpServletResponse.SC_OK);
 
   }
-  */
 
   private Airline searchForFlights(String source, String destination) {
     Airline searchResult = new Airline(this.airline.getName());
