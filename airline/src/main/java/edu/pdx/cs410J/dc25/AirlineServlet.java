@@ -1,47 +1,29 @@
 package edu.pdx.cs410J.dc25;
 
-import com.google.common.annotations.VisibleForTesting;
 import edu.pdx.cs410J.AirportNames;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.ws.Response;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
- * This servlet ultimately provides a REST API for working with an
- * <code>Airline</code>.  However, in its current state, it is an example
- * of how to use HTTP and Java servlets to store simple key/value pairs.
+ * This servlet provides a REST API for working with an <code>Airline</code>.  It can post a {@link Flight}, return all
+ * flights in the airline, or return flights that match specified search criteria.
  */
 public class AirlineServlet extends HttpServlet {
-  //private final Map<String, String> data = new HashMap<>();
   private Airline airline = null;
 
   /**
-   * Handles an HTTP GET request from a client by writing the value of the key
-   * specified in the "key" HTTP parameter to the HTTP response.  If the "key"
-   * parameter is not specified, all of the key/value pairs are written to the
-   * HTTP response.
+   * Handles an HTTP GET request from a client by returning all flights on the server if {@link Airline} matches name
+   * passed in, or returns an {@link Airline} containing flights that match the search parameters if search is
+   * specified.
    */
   @Override
   protected void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException
   {
     response.setContentType( "text/plain" );
-
-      /*
-      String key = getParameter( "key", request );
-      if (key != null) {
-          writeValue(key, response);
-
-      } else {
-          writeAllMappings(response);
-      }
-      */
 
     String airlineName = getParameter("name", request);
     String source = getParameter("src", request);
@@ -73,34 +55,13 @@ public class AirlineServlet extends HttpServlet {
   }
 
   /**
-   * Handles an HTTP POST request by storing the key/value pair specified by the
-   * "key" and "value" request parameters.  It writes the key/value pair to the
-   * HTTP response.
+   * Handles an HTTP POST request by storing the {@link Flight} specified by the flight request parameters.
+   * It checks the parameters for validity and writes the flight to the HTTP response.
    */
   @Override
   protected void doPost( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException
   {
     response.setContentType( "text/plain" );
-
-    /*
-    String key = getParameter( "key", request );
-    if (key == null) {
-      missingRequiredParameter(response, "key");
-      return;
-    }
-
-    String value = getParameter( "value", request );
-    if ( value == null) {
-      missingRequiredParameter( response, "value" );
-      return;
-    }
-
-    this.data.put(key, value);
-
-    PrintWriter pw = response.getWriter();
-    pw.println(Messages.mappedKeyValue(key, value));
-    pw.flush();
-    */
 
     String airlineName = getParameter("name", request);
     if (airlineName == null) {
@@ -169,27 +130,22 @@ public class AirlineServlet extends HttpServlet {
   }
 
   /**
-   * Handles an HTTP DELETE request by removing all key/value pairs.  This
-   * behavior is exposed for testing purposes only.  It's probably not
-   * something that you'd want a real application to expose.
+   * Handles an HTTP DELETE request by removing the airline.
    */
   @Override
   protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     response.setContentType("text/plain");
 
     this.airline = null;
-    /*
-    this.data.clear();
-
-    PrintWriter pw = response.getWriter();
-    pw.println(Messages.allMappingsDeleted());
-    pw.flush();
-    */
-
     response.setStatus(HttpServletResponse.SC_OK);
-
   }
 
+  /**
+   * Creates a new airline and stores flights that meet the search criteria in that airline
+   * @param source Airport the flight is departing from
+   * @param destination Airport the flight is arriving at
+   * @return Returns the {@link Airline} with all flights that match the search criteria
+   */
   private Airline searchForFlights(String source, String destination) {
     Airline searchResult = new Airline(this.airline.getName());
     Flight[] storedFlights = this.airline.getFlights().toArray(new Flight[this.airline.getFlights().size()]);
@@ -204,8 +160,6 @@ public class AirlineServlet extends HttpServlet {
 
   /**
    * Writes an error message about a missing parameter to the HTTP response.
-   *
-   * The text of the error message is created by {@link Messages#missingRequiredParameter(String)}
    */
   private void missingRequiredParameter( HttpServletResponse response, String parameterName )
           throws IOException
@@ -214,42 +168,6 @@ public class AirlineServlet extends HttpServlet {
             "if adding a flight, or 3 if performing a search.";
     response.sendError(HttpServletResponse.SC_PRECONDITION_FAILED, message);
   }
-
-  /**
-   * Writes the value of the given key to the HTTP response.
-   *
-   * The text of the message is formatted with
-   * {@link Messages#formatKeyValuePair(String, String)}
-   */
-  /*
-  private void writeValue( String key, HttpServletResponse response ) throws IOException {
-    String value = this.data.get(key);
-
-    PrintWriter pw = response.getWriter();
-    pw.println(Messages.formatKeyValuePair(key, value));
-
-    pw.flush();
-
-    response.setStatus( HttpServletResponse.SC_OK );
-  }
-  */
-
-  /**
-   * Writes all of the key/value pairs to the HTTP response.
-   *
-   * The text of the message is formatted with
-   * {@link Messages#formatKeyValuePair(String, String)}
-   */
-  /*
-  private void writeAllMappings( HttpServletResponse response ) throws IOException {
-    PrintWriter pw = response.getWriter();
-    Messages.formatKeyValueMap(pw, data);
-
-    pw.flush();
-
-    response.setStatus( HttpServletResponse.SC_OK );
-  }
-  */
 
   /**
    * Returns the value of the HTTP request parameter with the given name.
@@ -270,18 +188,6 @@ public class AirlineServlet extends HttpServlet {
   public Airline getAirline() {
     return this.airline;
   }
-
-  /*
-  @VisibleForTesting
-  void setValueForKey(String key, String value) {
-    this.data.put(key, value);
-  }
-
-  @VisibleForTesting
-  String getValueForKey(String key) {
-    return this.data.get(key);
-  }
-  */
 
   /**
    * Checks the command line argument for am or pm.  Gives an error and exits the program gracefully if neither am or pm
@@ -474,6 +380,11 @@ public class AirlineServlet extends HttpServlet {
     return digitsInHour != 0 && verifyNumberOfDigitsInMinutes(time, digitsInHour);
   }
 
+  /**
+   * Parses date and time string and checks validity.
+   * @param dateAndTime String to check
+   * @return Returns true if date and time are valid, false otherwise
+   */
   private static boolean parseAndVerifyDateAndTime(String dateAndTime) {
     String parts[] = dateAndTime.split(" ");
     String date = parts[0];
