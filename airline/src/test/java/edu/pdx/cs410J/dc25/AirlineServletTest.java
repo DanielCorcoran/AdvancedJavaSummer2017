@@ -25,9 +25,9 @@ public class AirlineServletTest {
     AirlineServlet servlet = new AirlineServlet();
 
     String airlineName = "My Airline";
-    String departTime = "1/1/2017 12:00 AM";
+    String departTime = "1/1/2017 12:00 am";
     String source = "PDX";
-    String arriveTime = "1/1/2017 12:30 AM";
+    String arriveTime = "1/1/2017 12:30 am";
     String destination = "LAX";
     int number = 123;
     String numberAsString = String.valueOf(number);
@@ -82,15 +82,15 @@ public class AirlineServletTest {
     String pdx = "PDX";
     String lax = "LAX";
     String las = "LAS";
-    String departTime = "1/1/2017 12:00 AM";
-    String arriveTime = "1/1/2017 12:30 AM";
+    String departTime = "1/1/2017 12:00 am";
+    String arriveTime = "1/1/2017 12:30 am";
 
     HttpServletResponse response;
-    response = makeRequestOfServlet(HttpVerb.POST, servlet, airlineName, "1/1/2017 12:00 AM", pdx, arriveTime, lax, "123");
+    response = makeRequestOfServlet(HttpVerb.POST, servlet, airlineName, "1/1/2017 12:00 am", pdx, arriveTime, lax, "123");
     verify(response).setStatus(HttpServletResponse.SC_OK);
-    response = makeRequestOfServlet(HttpVerb.POST, servlet, airlineName, "1/1/2017 12:01 AM", pdx, arriveTime, las, "234");
+    response = makeRequestOfServlet(HttpVerb.POST, servlet, airlineName, "1/1/2017 12:01 am", pdx, arriveTime, las, "234");
     verify(response).setStatus(HttpServletResponse.SC_OK);
-    response = makeRequestOfServlet(HttpVerb.POST, servlet, airlineName, "1/1/2017 12:02 AM", pdx, arriveTime, lax, "345");
+    response = makeRequestOfServlet(HttpVerb.POST, servlet, airlineName, "1/1/2017 12:02 am", pdx, arriveTime, lax, "345");
     verify(response).setStatus(HttpServletResponse.SC_OK);
 
     response = makeRequestOfServlet(HttpVerb.GET, servlet, airlineName, departTime, pdx, arriveTime, lax, null);

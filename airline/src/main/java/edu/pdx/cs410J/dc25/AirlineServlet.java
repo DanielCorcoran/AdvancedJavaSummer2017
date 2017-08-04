@@ -1,6 +1,7 @@
 package edu.pdx.cs410J.dc25;
 
 import com.google.common.annotations.VisibleForTesting;
+import edu.pdx.cs410J.AirportNames;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -50,7 +51,7 @@ public class AirlineServlet extends HttpServlet {
       missingRequiredParameter(response, "name");
       return;
     } else if (this.airline == null) {
-      response.sendError(HttpServletResponse.SC_EXPECTATION_FAILED, "There is no airline on the server");
+      response.sendError(HttpServletResponse.SC_PRECONDITION_FAILED, "There is no airline on the server");
     } else if (!this.airline.getName().equals(airlineName)) {
       response.sendError(HttpServletResponse.SC_PRECONDITION_FAILED, "Airline names do not match");
       return;
@@ -151,6 +152,16 @@ public class AirlineServlet extends HttpServlet {
       return;
     }
 
+    if (!isAirportCodeLegal(source) || !isAirportCodeLegal(destination)) {
+      response.sendError(HttpServletResponse.SC_PRECONDITION_FAILED, "Airport code is not valid");
+      return;
+    }
+
+    if (!parseAndVerifyDateAndTime(departTime) || !parseAndVerifyDateAndTime(arriveTime)) {
+      response.sendError(HttpServletResponse.SC_PRECONDITION_FAILED, "Date and time format incorrect");
+      return;
+    }
+
     Flight flight = new Flight(flightNumber, source, departTime, destination, arriveTime);
     this.airline.addFlight(flight);
 
@@ -199,7 +210,8 @@ public class AirlineServlet extends HttpServlet {
   private void missingRequiredParameter( HttpServletResponse response, String parameterName )
           throws IOException
   {
-    String message = Messages.missingRequiredParameter(parameterName);
+    String message = "The required parameter " + parameterName + " is missing.  There should be 6 total parameters " +
+            "if adding a flight, or 3 if performing a search.";
     response.sendError(HttpServletResponse.SC_PRECONDITION_FAILED, message);
   }
 
@@ -270,4 +282,216 @@ public class AirlineServlet extends HttpServlet {
     return this.data.get(key);
   }
   */
+
+  /**
+   * Checks the command line argument for am or pm.  Gives an error and exits the program gracefully if neither am or pm
+   * are found.
+   *
+   * @param apIn
+   *        am/pm argument from command line
+   * @return
+   *        Returns true if the string is "am" or "pm", false otherwise
+   */
+  private static boolean getAP(String apIn) {
+    return (apIn.equals("am") || apIn.equals("pm"));
+  }
+
+  /**
+   * Checks if an airport code is 3 chars, all chars are letters, and code is a real airport
+   *
+   * @param airportCode
+   *        Argument to be tested
+   * @return true if airport code is in correct format and a valid airport
+   */
+  private static boolean isAirportCodeLegal(String airportCode) {
+    return (airportCode.length() == 3 && (Character.isLetter(airportCode.charAt(0)) &&
+            Character.isLetter(airportCode.charAt(1)) && Character.isLetter(airportCode.charAt(2))) &&
+            AirportNames.getNamesMap().containsKey(airportCode));
+  }
+
+  /**
+   * Checks if time format has sufficient digits to be valid
+   *
+   * @param time
+   *        Argument to be tested
+   * @return Returns true if time length has valid number of characters, false otherwise
+   */
+  private static boolean isTimeLengthLegal(String time) {
+    return (time.length() < 4 || time.length() > 5);
+  }
+
+  /**
+   * Checks if date format has sufficient digits to be valid
+   *
+   * @param date
+   *        Argument to be tested
+   * @return Returns true if date length has valid number of characters, false otherwise
+   */
+  private static boolean isDateLengthLegal(String date) {
+    return (date.length() < 6 || date.length() > 10);
+  }
+
+  /**
+   * Calculates the number of digits in the month for date format.
+   * Necessary to calculate the rest of the date accurately.
+   *
+   * @param date
+   *        Argument to be tested
+   * @return
+   *        Returns number of digits in month of date.  Returns 0 if number of digits in month is not valid.
+   */
+  private static int numberOfDigitsInMonth(String date) {
+    if (Character.isDigit(date.charAt(0)) && date.charAt(1) == '/') {
+      return 1;
+    } else if (Character.isDigit(date.charAt(0)) && Character.isDigit(date.charAt(1)) &&
+            date.charAt(2) == '/') {
+      return 2;
+    } else {
+      return 0;
+    }
+  }
+
+  /**
+   * Calculates the number of digits in the day for date format.
+   * Necessary to calculate the rest of the date accurately.
+   *
+   * @param date
+   *        Argument to be tested
+   * @param digitsInMonth
+   *        Number of digits in the month.  Used as offset to calculate number of days in format
+   * @return
+   *        Returns number of digits in day of date.  Returns 0 if number of digits in day is not valid.
+   */
+  private static int numberOfDigitsInDay(String date, int digitsInMonth) {
+    if (Character.isDigit(date.charAt(digitsInMonth + 1)) &&
+            date.charAt(digitsInMonth + 2) == '/') {
+      return 1;
+    } else if (Character.isDigit(date.charAt(digitsInMonth + 1)) &&
+            Character.isDigit(date.charAt(digitsInMonth + 2)) &&
+            date.charAt(digitsInMonth + 3) == '/') {
+      return 2;
+    } else {
+      return 0;
+    }
+  }
+
+  /**
+   * Checks if the year in the date format is 4 chars long (or 2 if read from file) and all chars are numbers.
+   *
+   * @param date
+   *        Argument to be tested
+   * @param yearStartingPosition
+   *        Index of the first number of the year in the date
+   * @return
+   *        Returns true if year is exactly 4 chars long (or 2 if read from file) and all chars are numbers
+   */
+  private static boolean checkYearFormat(String date, int yearStartingPosition) {
+    boolean yearIsAllNumbers = true;
+
+    for(int i = yearStartingPosition; i < date.length(); ++i) {
+      if (!Character.isDigit(date.charAt(i))) {
+        yearIsAllNumbers = false;
+      }
+    }
+
+    return (((date.length() == yearStartingPosition + 4) || (date.length() == yearStartingPosition + 2)) &&
+            yearIsAllNumbers);
+  }
+
+  /**
+   * Calls the <code>numberOfDigitsInMonth</code>, <code>numberOfDigitsInDay</code>, and <code>checkYearFormat</code>
+   * methods to determine if the date format is valid
+   *
+   * @param date
+   *        Argument to be tested
+   * @return
+   *        Returns true is date format is valid.  Returns false otherwise.
+   */
+  private static boolean verifyDateFormat(String date) {
+    int digitsInMonth;
+    int digitsInDay;
+    int yearStartingPosition;
+
+    digitsInMonth = numberOfDigitsInMonth(date);
+    if (digitsInMonth == 0) {
+      return false;
+    }
+
+    digitsInDay = numberOfDigitsInDay(date, digitsInMonth);
+    if (digitsInDay == 0) {
+      return false;
+    }
+
+    yearStartingPosition = digitsInMonth + digitsInDay + 2;
+    return checkYearFormat(date, yearStartingPosition);
+  }
+
+  /**
+   * Calculates the number of digits in the hour of the time
+   *
+   * @param time
+   *        Argument to be tested
+   * @return
+   *        Returns number of digits in the hour of the time.  Returns 0 if number of digits in hours is not valid.
+   */
+  private static int numberOfDigitsInHour(String time) {
+    if (Character.isDigit(time.charAt(0)) && time.charAt(1) == ':') {
+      return 1;
+    } else if (Character.isDigit(time.charAt(0)) && Character.isDigit(time.charAt(1)) && time.charAt(2) == ':') {
+      return 2;
+    } else {
+      return 0;
+    }
+  }
+
+  /**
+   * Checks if the minutes of the time is 2 digits long
+   *
+   * @param time
+   *        Argument to be tested
+   * @param digitsInHour
+   *        Number of digits in the hour of the time
+   * @return
+   *        Returns true if there are 2 digits in the minutes place.  Returns false otherwise.
+   */
+  private static boolean verifyNumberOfDigitsInMinutes(String time, int digitsInHour) {
+    return time.substring(digitsInHour + 1).length() == 2 && Character.isDigit(time.charAt(digitsInHour + 1)) &&
+            Character.isDigit(time.charAt(digitsInHour + 2));
+  }
+
+  /**
+   * Checks if the time is in the correct format
+   *
+   * @param time
+   *        Argument to be tested
+   * @return
+   *        Returns true if time is in correct format.  Returns false otherwise.
+   */
+  private static boolean verifyTimeFormat(String time) {
+    int digitsInHour;
+
+    digitsInHour = numberOfDigitsInHour(time);
+    return digitsInHour != 0 && verifyNumberOfDigitsInMinutes(time, digitsInHour);
+  }
+
+  private static boolean parseAndVerifyDateAndTime(String dateAndTime) {
+    String parts[] = dateAndTime.split(" ");
+    String date = parts[0];
+    String time = parts[1];
+    String amPm = parts[2];
+
+    if (isDateLengthLegal(date)) {
+      if (!verifyDateFormat(date)) {
+        return false;
+      }
+    }
+
+    if (isTimeLengthLegal(time)) {
+      if (!verifyTimeFormat(time)) {
+        return false;
+      }
+    }
+
+    return getAP(amPm);
+  }
 }
