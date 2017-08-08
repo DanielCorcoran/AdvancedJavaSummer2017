@@ -52,14 +52,13 @@ public class PrettyPrinter implements AirlineDumper{
    * @return Returns pretty printed flights for given airline
    */
   String httpDump(AbstractAirline abstractAirline, String source, String destination) {
-    Flight[] flightArray =
-            (Flight[]) abstractAirline.getFlights().toArray(new Flight[abstractAirline.getFlights().size()]);
-    Arrays.sort(flightArray);
-
-    if (flightArray.length == 0) {
-      System.out.println("There are no flights that match the search criteria.");
-      return null;
+    if (abstractAirline.getFlights() == null) {
+      return "There are no flights that match the search criteria.";
     } else {
+      Flight[] flightArray =
+              (Flight[]) abstractAirline.getFlights().toArray(new Flight[abstractAirline.getFlights().size()]);
+      Arrays.sort(flightArray);
+
       String toWrite = "Flights for airline " + abstractAirline.getName();
       if (source != null && destination != null) {
         toWrite += " between " + source + " and " + destination + ":\n";

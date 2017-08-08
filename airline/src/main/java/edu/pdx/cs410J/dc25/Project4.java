@@ -71,11 +71,11 @@ public class Project4 {
 
     //If search option is selected, searches for flights
     if (args.length == 8 && port != 0) {
-      for (int i = 0; i < args.length; ++i) {
-        if (args[i].equals("-search")) {
-          String airlineName = args[i + 1];
-          String departAirport = args[i + 2].toUpperCase();
-          String arriveAirport = args[i + 3].toUpperCase();
+      for (String arg : args) {
+        if (arg.equals("-search")) {
+          String airlineName = args[argOffset + 1];
+          String departAirport = args[argOffset + 2].toUpperCase();
+          String arriveAirport = args[argOffset + 3].toUpperCase();
 
           isAirportCodeLegal(departAirport);
           isAirportCodeLegal(arriveAirport);
@@ -84,7 +84,10 @@ public class Project4 {
           try {
             System.out.println(client.searchForFlights(airlineName, departAirport, arriveAirport));
           } catch (IOException e) {
-            error("While contacting server: " + e);
+            error("Cannot connect to specified port");
+            return;
+          } catch (Exception e) {
+            error(e.getMessage());
             return;
           }
           System.exit(0);
@@ -98,7 +101,10 @@ public class Project4 {
         try {
           System.out.println(client.getAllFlights(args[argOffset]));
         } catch (IOException e) {
-          error("While contacting server: " + e);
+          error("Cannot connect to specified port");
+          return;
+        } catch (Exception e) {
+          error(e.getMessage());
           return;
         }
         System.exit(0);
@@ -152,7 +158,10 @@ public class Project4 {
         try {
           client.addFlightToServer(args[argOffset], flight);
         } catch (IOException e) {
-          error("While contacting server: " + e);
+          error("Cannot connect to specified port");
+          return;
+        } catch (Exception e) {
+          error(e.getMessage());
           return;
         }
         System.out.println("Added flight to server");
