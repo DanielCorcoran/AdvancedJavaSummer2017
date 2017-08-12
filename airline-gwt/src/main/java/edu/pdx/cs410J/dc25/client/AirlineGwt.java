@@ -86,11 +86,19 @@ public class AirlineGwt implements EntryPoint {
   private void addWidgets(VerticalPanel panel) {
     final TextBox airlineNameBox = new TextBox();
 
+    Button addAirlineToServer = new Button("Add new airline");
+    addAirlineToServer.addClickHandler(new ClickHandler() {
+      @Override
+      public void onClick(ClickEvent clickEvent) {
+        addAirline(airlineNameBox.getText());
+      }
+    });
+
     showAirlineButton = new Button("Show Airline");
     showAirlineButton.addClickHandler(new ClickHandler() {
       @Override
       public void onClick(ClickEvent clickEvent) {
-        showAirline(airlineNameBox.getText());
+        showAirline();
       }
     });
 
@@ -119,6 +127,7 @@ public class AirlineGwt implements EntryPoint {
     });
 
     panel.add(airlineNameBox);
+    panel.add(addAirlineToServer);
     panel.add(showAirlineButton);
     panel.add(showUndeclaredExceptionButton);
     panel.add(showDeclaredExceptionButton);
@@ -160,13 +169,13 @@ public class AirlineGwt implements EntryPoint {
     });
   }
 
-  private void showAirline(String airlineName) {
+  private void showAirline() {
     logger.info("Calling getAirline");
-    airlineService.getAirline(airlineName, new AsyncCallback<Airline>() {
+    airlineService.getAirline(new AsyncCallback<Airline>() {
 
       @Override
       public void onFailure(Throwable ex) {
-        alertOnException(ex);
+        alerter.alert(ex.getMessage());
       }
 
       @Override
@@ -178,6 +187,22 @@ public class AirlineGwt implements EntryPoint {
           sb.append("\n");
         }
         alerter.alert(sb.toString());
+      }
+    });
+  }
+
+  private void addAirline(String airlineName) {
+    logger.info("Adding airline");
+    airlineService.addAirlineToServer(airlineName, new AsyncCallback<Void>() {
+
+      @Override
+      public void onFailure(Throwable ex) {
+        alerter.alert(ex.getMessage());
+      }
+
+      @Override
+      public void onSuccess(Void aVoid) {
+        alerter.alert("Added airline to server");
       }
     });
   }

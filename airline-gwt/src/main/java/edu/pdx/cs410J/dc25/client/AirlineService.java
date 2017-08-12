@@ -11,10 +11,17 @@ public interface AirlineService extends RemoteService {
 
   /**
    * Returns the current date and time on the server
-   * @param airlineName
-   *        Name of <code>Airline</code>
    */
-  Airline getAirline(String airlineName);
+  Airline getAirline() throws Exception;
+
+  /**
+   * Adds an <code>Airline</code> to the server
+   * @param airlineName
+   *        Name of the <code>Airline</code> to create
+   * @throws Exception
+   *         If airline already exists on the server
+   */
+  void addAirlineToServer(String airlineName) throws Exception;
 
   /**
    * Always throws an undeclared exception so that we can see GWT handles it.

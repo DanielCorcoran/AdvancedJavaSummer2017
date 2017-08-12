@@ -10,11 +10,28 @@ import edu.pdx.cs410J.dc25.client.AirlineService;
  */
 public class AirlineServiceImpl extends RemoteServiceServlet implements AirlineService
 {
+  private Airline airline = null;
+
   @Override
-  public Airline getAirline(String airlineName) {
-    Airline airline = new Airline(airlineName);
-    airline.addFlight(new Flight());
-    return airline;
+  public Airline getAirline() throws Exception {
+    if (this.airline == null) {
+      throw new Exception("There is no airline on the server");
+    } else if (this.airline.getFlights() == null) {
+      throw new Exception("Airline " + this.airline.getName() + " does not have any flights");
+    } else {
+      return this.airline;
+    }
+  }
+
+  @Override
+  public void addAirlineToServer(String airlineName) throws Exception {
+    if (airlineName.length() == 0) {
+      throw new Exception("Airline must have a name");
+    } else if (this.airline == null) {
+      this.airline = new Airline(airlineName);
+    } else {
+      throw new Exception("Could not add airline to server.  Make sure the server does not already have an airline.");
+    }
   }
 
   @Override
