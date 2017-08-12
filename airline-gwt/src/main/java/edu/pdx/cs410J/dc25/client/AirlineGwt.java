@@ -30,15 +30,6 @@ public class AirlineGwt implements EntryPoint {
   @VisibleForTesting
   Button showAirlineButton;
 
-  @VisibleForTesting
-  Button showUndeclaredExceptionButton;
-
-  @VisibleForTesting
-  Button showDeclaredExceptionButton;
-
-  @VisibleForTesting
-  Button showClientSideExceptionButton;
-
   public AirlineGwt() {
     this(new Alerter() {
       @Override
@@ -102,71 +93,9 @@ public class AirlineGwt implements EntryPoint {
       }
     });
 
-    showUndeclaredExceptionButton = new Button("Show undeclared exception");
-    showUndeclaredExceptionButton.addClickHandler(new ClickHandler() {
-      @Override
-      public void onClick(ClickEvent clickEvent) {
-        showUndeclaredException();
-      }
-    });
-
-    showDeclaredExceptionButton = new Button("Show declared exception");
-    showDeclaredExceptionButton.addClickHandler(new ClickHandler() {
-      @Override
-      public void onClick(ClickEvent clickEvent) {
-        showDeclaredException();
-      }
-    });
-
-    showClientSideExceptionButton= new Button("Show client-side exception");
-    showClientSideExceptionButton.addClickHandler(new ClickHandler() {
-      @Override
-      public void onClick(ClickEvent clickEvent) {
-        throwClientSideException();
-      }
-    });
-
     panel.add(airlineNameBox);
     panel.add(addAirlineToServer);
     panel.add(showAirlineButton);
-    panel.add(showUndeclaredExceptionButton);
-    panel.add(showDeclaredExceptionButton);
-    panel.add(showClientSideExceptionButton);
-  }
-
-  private void throwClientSideException() {
-    logger.info("About to throw a client-side exception");
-    throw new IllegalStateException("Expected exception on the client side");
-  }
-
-  private void showUndeclaredException() {
-    logger.info("Calling throwUndeclaredException");
-    airlineService.throwUndeclaredException(new AsyncCallback<Void>() {
-      @Override
-      public void onFailure(Throwable ex) {
-        alertOnException(ex);
-      }
-
-      @Override
-      public void onSuccess(Void aVoid) {
-        alerter.alert("This shouldn't happen");
-      }
-    });
-  }
-
-  private void showDeclaredException() {
-    logger.info("Calling throwDeclaredException");
-    airlineService.throwDeclaredException(new AsyncCallback<Void>() {
-      @Override
-      public void onFailure(Throwable ex) {
-        alertOnException(ex);
-      }
-
-      @Override
-      public void onSuccess(Void aVoid) {
-        alerter.alert("This shouldn't happen");
-      }
-    });
   }
 
   private void showAirline() {

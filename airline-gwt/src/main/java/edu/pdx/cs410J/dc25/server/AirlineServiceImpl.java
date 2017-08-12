@@ -34,16 +34,6 @@ public class AirlineServiceImpl extends RemoteServiceServlet implements AirlineS
     }
   }
 
-  @Override
-  public void throwUndeclaredException() {
-    throw new IllegalStateException("Expected undeclared exception");
-  }
-
-  @Override
-  public void throwDeclaredException() throws IllegalStateException {
-    throw new IllegalStateException("Expected declared exception");
-  }
-
   /**
    * Log unhandled exceptions to standard error
    *

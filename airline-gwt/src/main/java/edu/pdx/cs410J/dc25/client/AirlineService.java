@@ -22,15 +22,4 @@ public interface AirlineService extends RemoteService {
    *         If airline already exists on the server
    */
   void addAirlineToServer(String airlineName) throws Exception;
-
-  /**
-   * Always throws an undeclared exception so that we can see GWT handles it.
-   */
-  void throwUndeclaredException();
-
-  /**
-   * Always throws a declared exception so that we can see GWT handles it.
-   */
-  void throwDeclaredException() throws IllegalStateException;
-
 }
