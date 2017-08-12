@@ -11,6 +11,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import java.util.Collection;
@@ -83,11 +84,13 @@ public class AirlineGwt implements EntryPoint {
   }
 
   private void addWidgets(VerticalPanel panel) {
+    final TextBox airlineNameBox = new TextBox();
+
     showAirlineButton = new Button("Show Airline");
     showAirlineButton.addClickHandler(new ClickHandler() {
       @Override
       public void onClick(ClickEvent clickEvent) {
-        showAirline();
+        showAirline(airlineNameBox.getText());
       }
     });
 
@@ -115,6 +118,7 @@ public class AirlineGwt implements EntryPoint {
       }
     });
 
+    panel.add(airlineNameBox);
     panel.add(showAirlineButton);
     panel.add(showUndeclaredExceptionButton);
     panel.add(showDeclaredExceptionButton);
@@ -156,9 +160,9 @@ public class AirlineGwt implements EntryPoint {
     });
   }
 
-  private void showAirline() {
+  private void showAirline(String airlineName) {
     logger.info("Calling getAirline");
-    airlineService.getAirline(new AsyncCallback<Airline>() {
+    airlineService.getAirline(airlineName, new AsyncCallback<Airline>() {
 
       @Override
       public void onFailure(Throwable ex) {
