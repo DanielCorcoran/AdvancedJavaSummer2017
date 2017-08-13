@@ -19,4 +19,6 @@ public interface AirlineServiceAsync {
 
   void addFlightToServer(int flightNumber, String source, String departDateTime, String dest, String arriveDateTime,
                          AsyncCallback<Void> async);
+
+  void searchServerForFlights(String source, String destination, AsyncCallback<Airline> async);
 }

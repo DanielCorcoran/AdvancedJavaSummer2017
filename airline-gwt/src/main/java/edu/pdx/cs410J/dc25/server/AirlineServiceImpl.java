@@ -65,6 +65,29 @@ public class AirlineServiceImpl extends RemoteServiceServlet implements AirlineS
   }
 
   /**
+   * Creates a new airline and stores flights that meet the search criteria in that airline
+   * @param source Airport the flight is departing from
+   * @param destination Airport the flight is arriving at
+   * @return Returns the {@link Airline} with all flights that match the search criteria
+   */
+  public Airline searchServerForFlights(String source, String destination) throws Exception {
+    Airline searchResult = new Airline(this.airline.getName());
+    Flight[] storedFlights = this.airline.getFlights().toArray(new Flight[this.airline.getFlights().size()]);
+
+    for (Flight storedFlight : storedFlights) {
+      if (storedFlight.getSource().equals(source) && storedFlight.getDestination().equals(destination)) {
+        searchResult.addFlight(storedFlight);
+      }
+    }
+
+    if (searchResult.getFlights() == null) {
+      throw new Exception("No flights match the search criteria");
+    } else {
+      return searchResult;
+    }
+  }
+
+  /**
    * Log unhandled exceptions to standard error
    *
    * @param unhandled

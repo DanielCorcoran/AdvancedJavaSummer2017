@@ -25,4 +25,6 @@ public interface AirlineService extends RemoteService {
 
   void addFlightToServer(int flightNumber, String source, String departDateTime, String dest, String arriveDateTime)
           throws Exception;
+
+  Airline searchServerForFlights(String source, String destination) throws Exception;
 }

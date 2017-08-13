@@ -82,6 +82,8 @@ public class AirlineGwt implements EntryPoint {
     final TextBox flightNumberBox = makeTextBox("Flight number");
     final TextBox sourceBox = makeTextBox("Departing airport code");
     final TextBox destBox = makeTextBox("Arrival airport code");
+    final TextBox searchSourceBox = makeTextBox("Departing airport code to search");
+    final TextBox searchDestBox = makeTextBox("Arrival airport code to search");
 
     final DatePicker departDatePicker = new DatePicker();
     departDatePicker.setValue(new Date());
@@ -137,6 +139,14 @@ public class AirlineGwt implements EntryPoint {
       }
     });
 
+    Button searchForFlightsButton = new Button("Search for flights");
+    searchForFlightsButton.addClickHandler(new ClickHandler() {
+      @Override
+      public void onClick(ClickEvent clickEvent) {
+        searchForFlights(searchSourceBox.getText(), searchDestBox.getText());
+      }
+    });
+
     panel.add(airlineNameBox);
     panel.add(addAirlineToServerButton);
     panel.add(showAirlineButton);
@@ -152,6 +162,9 @@ public class AirlineGwt implements EntryPoint {
     panel.add(arriveMinuteBox);
     panel.add(arriveAmPmBox);
     panel.add(addFlightButton);
+    panel.add(searchSourceBox);
+    panel.add(searchDestBox);
+    panel.add(searchForFlightsButton);
   }
 
   private TextBox makeTextBox(String textToSet) {
@@ -248,6 +261,27 @@ public class AirlineGwt implements EntryPoint {
                 alerter.alert("Added flight to airline");
               }
             });
+  }
+
+  private void searchForFlights(String source, String destination) {
+    logger.info("Searching for flights");
+    airlineService.searchServerForFlights(source, destination, new AsyncCallback<Airline>() {
+      @Override
+      public void onFailure(Throwable ex) {
+        alerter.alert(ex.getMessage());
+      }
+
+      @Override
+      public void onSuccess(Airline airline) {
+        StringBuilder sb = new StringBuilder(airline.toString());
+        Collection<Flight> flights = airline.getFlights();
+        for (Flight flight : flights) {
+          sb.append(flight);
+          sb.append("\n");
+        }
+        alerter.alert(sb.toString());
+      }
+    });
   }
 
   /**
