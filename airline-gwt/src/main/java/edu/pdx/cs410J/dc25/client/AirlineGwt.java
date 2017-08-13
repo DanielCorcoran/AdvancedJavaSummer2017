@@ -6,15 +6,18 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.FocusEvent;
+import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.shared.UmbrellaException;
+import com.google.gwt.i18n.shared.DateTimeFormat;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.*;
+import com.google.gwt.user.datepicker.client.DatePicker;
+import edu.pdx.cs410J.AirportNames;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -75,10 +78,25 @@ public class AirlineGwt implements EntryPoint {
   }
 
   private void addWidgets(VerticalPanel panel) {
-    final TextBox airlineNameBox = new TextBox();
+    final TextBox airlineNameBox = makeTextBox("Airline name");
+    final TextBox flightNumberBox = makeTextBox("Flight number");
+    final TextBox sourceBox = makeTextBox("Departing airport code");
+    final TextBox destBox = makeTextBox("Arrival airport code");
 
-    Button addAirlineToServer = new Button("Add new airline");
-    addAirlineToServer.addClickHandler(new ClickHandler() {
+    final DatePicker departDatePicker = new DatePicker();
+    departDatePicker.setValue(new Date());
+    final DatePicker arriveDatePicker = new DatePicker();
+    arriveDatePicker.setValue(new Date());
+
+    final ListBox departHourBox = makeHourBox();
+    final ListBox departMinuteBox = makeMinuteBox();
+    final ListBox departAmPmBox = makeAmPmBox();
+    final ListBox arriveHourBox = makeHourBox();
+    final ListBox arriveMinuteBox = makeMinuteBox();
+    final ListBox arriveAmPmBox = makeAmPmBox();
+
+    Button addAirlineToServerButton = new Button("Add new airline");
+    addAirlineToServerButton.addClickHandler(new ClickHandler() {
       @Override
       public void onClick(ClickEvent clickEvent) {
         addAirline(airlineNameBox.getText());
@@ -93,9 +111,89 @@ public class AirlineGwt implements EntryPoint {
       }
     });
 
+    Button addFlightButton = new Button("Add new flight");
+    addFlightButton.addClickHandler(new ClickHandler() {
+      @Override
+      public void onClick(ClickEvent clickEvent) {
+        if (isAirportCodeLegal(sourceBox.getText().toUpperCase()) &&
+                isAirportCodeLegal(destBox.getText().toUpperCase())) {
+          int flightNumber = verifyFlightNumberIsInteger(flightNumberBox.getValue());
+          if (flightNumber != -1) {
+            DateTimeFormat format = DateTimeFormat.getFormat("MM/dd/yyyy");
+            String depart = format.format(departDatePicker.getValue()) + " " +
+                    departHourBox.getSelectedItemText() + ":" +
+                    departMinuteBox.getSelectedItemText() + " " +
+                    departAmPmBox.getSelectedItemText();
+            String arrive = format.format(departDatePicker.getValue()) + " " +
+                    departHourBox.getSelectedItemText() + ":" +
+                    departMinuteBox.getSelectedItemText() + " " +
+                    departAmPmBox.getSelectedItemText();
+
+            addFlight(flightNumber, sourceBox.getText().toUpperCase(), depart, destBox.getText().toUpperCase(), arrive);
+          }
+        } else {
+          alerter.alert("Airport codes for departure and arrival airports must both be valid");
+        }
+      }
+    });
+
     panel.add(airlineNameBox);
-    panel.add(addAirlineToServer);
+    panel.add(addAirlineToServerButton);
     panel.add(showAirlineButton);
+    panel.add(flightNumberBox);
+    panel.add(sourceBox);
+    panel.add(departDatePicker);
+    panel.add(departHourBox);
+    panel.add(departMinuteBox);
+    panel.add(departAmPmBox);
+    panel.add(destBox);
+    panel.add(arriveDatePicker);
+    panel.add(arriveHourBox);
+    panel.add(arriveMinuteBox);
+    panel.add(arriveAmPmBox);
+    panel.add(addFlightButton);
+  }
+
+  private TextBox makeTextBox(String textToSet) {
+    final TextBox airlineNameBox = new TextBox();
+    airlineNameBox.setText(textToSet);
+    airlineNameBox.addFocusHandler(new FocusHandler() {
+      @Override
+      public void onFocus(FocusEvent focusEvent) {
+        airlineNameBox.setText("");
+      }
+    });
+    return airlineNameBox;
+  }
+
+  private ListBox makeHourBox() {
+    ListBox hourBox = new ListBox();
+    for (int i = 1; i <= 12; ++i) {
+      hourBox.addItem(String.valueOf(i));
+    }
+    hourBox.setVisibleItemCount(1);
+    return hourBox;
+  }
+
+  private ListBox makeAmPmBox() {
+    ListBox amPmBox = new ListBox();
+    amPmBox.addItem("am");
+    amPmBox.addItem("pm");
+    amPmBox.setVisibleItemCount(1);
+    return amPmBox;
+  }
+
+  private ListBox makeMinuteBox() {
+    ListBox minuteBox = new ListBox();
+    for (int i = 0; i <= 59; ++i) {
+      if (i < 10) {
+        minuteBox.addItem("0" + String.valueOf(i));
+      } else {
+        minuteBox.addItem(String.valueOf(i));
+      }
+    }
+    minuteBox.setVisibleItemCount(1);
+    return minuteBox;
   }
 
   private void showAirline() {
@@ -134,6 +232,55 @@ public class AirlineGwt implements EntryPoint {
         alerter.alert("Added airline to server");
       }
     });
+  }
+
+  private void addFlight(int flightNumber, String source, String departDateTime, String dest, String arriveDateTime) {
+    logger.info("Adding flight");
+    airlineService.addFlightToServer(
+            flightNumber, source, departDateTime, dest, arriveDateTime, new AsyncCallback<Void>() {
+              @Override
+              public void onFailure(Throwable ex) {
+                alerter.alert(ex.getMessage());
+              }
+
+              @Override
+              public void onSuccess(Void aVoid) {
+                alerter.alert("Added flight to airline");
+              }
+            });
+  }
+
+  /**
+   * Checks if an airport code is 3 chars, all chars are letters, and code is a real airport
+   *
+   * @param airportCode
+   *        Argument to be tested
+   * @return true if airport code is in correct format and a valid airport
+   */
+  private boolean isAirportCodeLegal(String airportCode) {
+    return (airportCode.length() == 3 && (Character.isLetter(airportCode.charAt(0)) &&
+            Character.isLetter(airportCode.charAt(1)) && Character.isLetter(airportCode.charAt(2))) &&
+            AirportNames.getNamesMap().containsKey(airportCode));
+  }
+
+  /**
+   * Checks if the flight number passed in is an integer
+   *
+   * @param flightNumberIn
+   *        Command line argument to be tested
+   * @return
+   *        Returns flight number as an integer if valid.  Otherwise exits the program with an error message.
+   */
+  private int verifyFlightNumberIsInteger(String flightNumberIn) {
+    int flightNumber = -1;
+
+    try {
+      flightNumber = Integer.parseInt(flightNumberIn);
+    } catch (NumberFormatException e) {
+      alerter.alert("Flight number must contain only numbers");
+    }
+
+    return flightNumber;
   }
 
   @Override

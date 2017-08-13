@@ -14,14 +14,13 @@ public class Flight extends AbstractFlight implements Comparable<Flight> {
   private int flightNumber;
   private String source;
   private String destination;
-  private String depart;
-  private String arrival;
+  private Date depart;
+  private Date arrival;
 
   /**
    * In order for GWT to serialize this class (so that it can be sent between
    * the client and the server), it must have a zero-argument constructor.
    */
-  /*
   public Flight() {
 
   }
@@ -39,8 +38,8 @@ public class Flight extends AbstractFlight implements Comparable<Flight> {
    *        3 letter code for the airport at which the flight lands
    * @param arrivalIn
    *        Time of arrival
-   *
-  Flight(int flightNumberIn, String sourceIn, String departIn, String destinationIn, String arrivalIn) {
+   */
+  public Flight(int flightNumberIn, String sourceIn, Date departIn, String destinationIn, Date arrivalIn) {
     this.flightNumber = flightNumberIn;
     this.source = sourceIn;
     this.depart = departIn;
@@ -50,7 +49,7 @@ public class Flight extends AbstractFlight implements Comparable<Flight> {
 
   /**
    * @return Flight number
-   *
+   */
   @Override
   public int getNumber() {
     return this.flightNumber;
@@ -58,7 +57,7 @@ public class Flight extends AbstractFlight implements Comparable<Flight> {
 
   /**
    * @return Departing airport code
-   *
+   */
   @Override
   public String getSource() {
     return this.source;
@@ -66,16 +65,15 @@ public class Flight extends AbstractFlight implements Comparable<Flight> {
 
   /**
    * @return Date and time of departure
-   *
+   */
   @Override
   public String getDepartureString() {
-    DateFormat df = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
-    return df.format(getDeparture());
+    return "DEPART" + getDeparture();
   }
 
   /**
    * @return Code of arrival airport
-   *
+   */
   @Override
   public String getDestination() {
     return this.destination;
@@ -83,45 +81,26 @@ public class Flight extends AbstractFlight implements Comparable<Flight> {
 
   /**
    * @return Date and time of arrival
-   *
+   */
   @Override
   public String getArrivalString() {
-    DateFormat df = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
-    return df.format(getArrival());
+    return "ARRIVE" + getArrival();
   }
 
   /**
    * @return Date and time of departure as a date
-   *
+   */
   @Override
   public Date getDeparture() {
-    SimpleDateFormat parseFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm a");
-
-    Date departAsDate = null;
-    try {
-      departAsDate = parseFormat.parse(depart);
-    }catch (ParseException e) {
-      System.out.println("Unparseable using " + parseFormat);
-    }
-
-    return departAsDate;
+    return this.depart;
   }
 
   /**
    * @return Date and time of arrival as a date
-   *
+   */
   @Override
   public Date getArrival() {
-    SimpleDateFormat parseFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm a");
-
-    Date arriveAsDate = null;
-    try {
-      arriveAsDate = parseFormat.parse(arrival);
-    }catch (ParseException e) {
-      System.out.println("Unparseable using " + parseFormat);
-    }
-
-    return arriveAsDate;
+    return this.arrival;
   }
 
   /**
@@ -149,57 +128,4 @@ public class Flight extends AbstractFlight implements Comparable<Flight> {
     }
   }
 
-  /*
-  /**
-   * @return Returns depart as a raw string
-   *
-  String getDepartDataMember() {
-    return this.depart;
-  }
-
-  /**
-   * @return Returns arrival as raw string
-   *
-  String getArrivalDataMember() {
-    return this.arrival;
-  }
-
-  /**
-   * In order for GWT to serialize this class (so that it can be sent between
-   * the client and the server), it must have a zero-argument constructor.
-   */
-  public Flight() {
-
-  }
-
-  @Override
-  public int getNumber() {
-    return 42;
-  }
-
-  @Override
-  public String getSource() {
-    return "PDX";
-  }
-
-  @Override
-  public Date getDeparture() {
-    return new Date();
-  }
-
-  public String getDepartureString() {
-    return "DEPART " + getDeparture();
-  }
-
-  public String getDestination() {
-    return "MHT";
-  }
-
-  public Date getArrival() {
-    return new Date();
-  }
-
-  public String getArrivalString() {
-    return "ARRIVE " + getArrival();
-  }
 }

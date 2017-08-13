@@ -22,4 +22,7 @@ public interface AirlineService extends RemoteService {
    *         If airline already exists on the server
    */
   void addAirlineToServer(String airlineName) throws Exception;
+
+  void addFlightToServer(int flightNumber, String source, String departDateTime, String dest, String arriveDateTime)
+          throws Exception;
 }

@@ -16,4 +16,7 @@ public interface AirlineServiceAsync {
    * Adds an <code>Airline</code> to the server if one isn't present
    */
   void addAirlineToServer(String airlineName, AsyncCallback<Void> async);
+
+  void addFlightToServer(int flightNumber, String source, String departDateTime, String dest, String arriveDateTime,
+                         AsyncCallback<Void> async);
 }
