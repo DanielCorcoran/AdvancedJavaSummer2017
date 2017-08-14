@@ -220,13 +220,8 @@ public class AirlineGwt implements EntryPoint {
 
       @Override
       public void onSuccess(Airline airline) {
-        StringBuilder sb = new StringBuilder(airline.toString());
-        Collection<Flight> flights = airline.getFlights();
-        for (Flight flight : flights) {
-          sb.append(flight);
-          sb.append("\n");
-        }
-        alerter.alert(sb.toString());
+        PrettyPrinter pretty = new PrettyPrinter();
+        alerter.alert(pretty.httpDump(airline, null, null));
       }
     });
   }
@@ -263,9 +258,12 @@ public class AirlineGwt implements EntryPoint {
             });
   }
 
-  private void searchForFlights(String source, String destination) {
+  private void searchForFlights(String sourceIn, String destinationIn) {
+    final String source = sourceIn;
+    final String destination = destinationIn;
+
     logger.info("Searching for flights");
-    airlineService.searchServerForFlights(source, destination, new AsyncCallback<Airline>() {
+    airlineService.searchServerForFlights(sourceIn, destinationIn, new AsyncCallback<Airline>() {
       @Override
       public void onFailure(Throwable ex) {
         alerter.alert(ex.getMessage());
@@ -273,13 +271,8 @@ public class AirlineGwt implements EntryPoint {
 
       @Override
       public void onSuccess(Airline airline) {
-        StringBuilder sb = new StringBuilder(airline.toString());
-        Collection<Flight> flights = airline.getFlights();
-        for (Flight flight : flights) {
-          sb.append(flight);
-          sb.append("\n");
-        }
-        alerter.alert(sb.toString());
+        PrettyPrinter pretty = new PrettyPrinter();
+        alerter.alert(pretty.httpDump(airline, source, destination));
       }
     });
   }
