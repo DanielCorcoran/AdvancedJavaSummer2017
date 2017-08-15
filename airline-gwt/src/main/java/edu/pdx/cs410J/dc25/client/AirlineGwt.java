@@ -16,13 +16,12 @@ import com.google.gwt.user.client.ui.*;
 import com.google.gwt.user.datepicker.client.DatePicker;
 import edu.pdx.cs410J.AirportNames;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * A basic GWT class that makes sure that we can send an airline back from the server
+ * This class sets up the UI for the website and handles the client side interaction (button events, etc)
  */
 public class AirlineGwt implements EntryPoint {
 
@@ -77,7 +76,23 @@ public class AirlineGwt implements EntryPoint {
     return throwable;
   }
 
+  /**
+   * This method adds widgets to the main panel and creates the UI.  Buttons are created and their events are handled
+   * in this method.
+   * @param panel
+   *        Main panel to populate with UI widgets
+   */
   private void addWidgets(VerticalPanel panel) {
+    String helpString = "This website is a way to maintain flight information for a specific airline.\n" +
+            "To begin, click on the Add/Display Airline tab.\n" +
+            "You must enter an airline before you can use the other features.\n" +
+            "Once an airline is entered, you may enter flights for that airline.\n\n" +
+            "To enter a flight into the system, enter the departure data (on the left), " +
+            "the arrival data (on the right), and click the Add flight button.\n" +
+            "If the flight is unique, it will be added to the system.\n\n" +
+            "To search for flights, enter the airport code of the departing and arriving airports you wish to search.\n" +
+            "If any matches are found, they will be displayed in the box below.";
+
     final TextBox airlineNameBox = makeTextBox("Airline name");
     final TextBox flightNumberBox = makeTextBox("Flight number");
     final TextBox sourceBox = makeTextBox("Departing airport code");
@@ -97,6 +112,28 @@ public class AirlineGwt implements EntryPoint {
     final ListBox arriveMinuteBox = makeMinuteBox();
     final ListBox arriveAmPmBox = makeAmPmBox();
 
+    final TextArea airlineInfo = new TextArea();
+    airlineInfo.setCharacterWidth(80);
+    airlineInfo.setVisibleLines(10);
+    final TextArea searchInfo = new TextArea();
+    searchInfo.setCharacterWidth(80);
+    searchInfo.setVisibleLines(10);
+    final TextArea helpInfo = new TextArea();
+    helpInfo.setCharacterWidth(80);
+    helpInfo.setVisibleLines(12);
+    helpInfo.setText(helpString);
+
+    TabPanel tabPanel = new TabPanel();
+    VerticalPanel airlinePanel = new VerticalPanel();
+    VerticalPanel flightPanel = new VerticalPanel();
+    VerticalPanel searchPanel = new VerticalPanel();
+    VerticalPanel helpPanel = new VerticalPanel();
+
+    HorizontalPanel airlineButtonsPanel = new HorizontalPanel();
+    HorizontalPanel airportCodePanel = new HorizontalPanel();
+    HorizontalPanel datePickerPanel = new HorizontalPanel();
+    HorizontalPanel timePanel = new HorizontalPanel();
+
     Button addAirlineToServerButton = new Button("Add new airline");
     addAirlineToServerButton.addClickHandler(new ClickHandler() {
       @Override
@@ -109,7 +146,7 @@ public class AirlineGwt implements EntryPoint {
     showAirlineButton.addClickHandler(new ClickHandler() {
       @Override
       public void onClick(ClickEvent clickEvent) {
-        showAirline();
+        showAirline(airlineInfo);
       }
     });
 
@@ -127,9 +164,9 @@ public class AirlineGwt implements EntryPoint {
                     departMinuteBox.getSelectedItemText() + " " +
                     departAmPmBox.getSelectedItemText();
             String arrive = format.format(departDatePicker.getValue()) + " " +
-                    departHourBox.getSelectedItemText() + ":" +
-                    departMinuteBox.getSelectedItemText() + " " +
-                    departAmPmBox.getSelectedItemText();
+                    arriveHourBox.getSelectedItemText() + ":" +
+                    arriveMinuteBox.getSelectedItemText() + " " +
+                    arriveAmPmBox.getSelectedItemText();
 
             addFlight(flightNumber, sourceBox.getText().toUpperCase(), depart, destBox.getText().toUpperCase(), arrive);
           }
@@ -143,30 +180,49 @@ public class AirlineGwt implements EntryPoint {
     searchForFlightsButton.addClickHandler(new ClickHandler() {
       @Override
       public void onClick(ClickEvent clickEvent) {
-        searchForFlights(searchSourceBox.getText(), searchDestBox.getText());
+        searchForFlights(searchInfo, searchSourceBox.getText().toUpperCase(), searchDestBox.getText().toUpperCase());
       }
     });
 
-    panel.add(airlineNameBox);
-    panel.add(addAirlineToServerButton);
-    panel.add(showAirlineButton);
-    panel.add(flightNumberBox);
-    panel.add(sourceBox);
-    panel.add(departDatePicker);
-    panel.add(departHourBox);
-    panel.add(departMinuteBox);
-    panel.add(departAmPmBox);
-    panel.add(destBox);
-    panel.add(arriveDatePicker);
-    panel.add(arriveHourBox);
-    panel.add(arriveMinuteBox);
-    panel.add(arriveAmPmBox);
-    panel.add(addFlightButton);
-    panel.add(searchSourceBox);
-    panel.add(searchDestBox);
-    panel.add(searchForFlightsButton);
+    airlinePanel.add(airlineNameBox);
+    airlinePanel.add(airlineButtonsPanel);
+    airlineButtonsPanel.add(addAirlineToServerButton);
+    airlineButtonsPanel.add(showAirlineButton);
+    airlinePanel.add(airlineInfo);
+    flightPanel.add(flightNumberBox);
+    flightPanel.add(airportCodePanel);
+    airportCodePanel.add(sourceBox);
+    flightPanel.add(datePickerPanel);
+    datePickerPanel.add(departDatePicker);
+    flightPanel.add(timePanel);
+    timePanel.add(departHourBox);
+    timePanel.add(departMinuteBox);
+    timePanel.add(departAmPmBox);
+    airportCodePanel.add(destBox);
+    datePickerPanel.add(arriveDatePicker);
+    timePanel.add(arriveHourBox);
+    timePanel.add(arriveMinuteBox);
+    timePanel.add(arriveAmPmBox);
+    flightPanel.add(addFlightButton);
+    searchPanel.add(searchSourceBox);
+    searchPanel.add(searchDestBox);
+    searchPanel.add(searchForFlightsButton);
+    searchPanel.add(searchInfo);
+    helpPanel.add(helpInfo);
+    tabPanel.add(airlinePanel, "Add/Display Airline");
+    tabPanel.add(flightPanel, "Add Flight");
+    tabPanel.add(searchPanel, "Search for Flights");
+    tabPanel.add(helpPanel, "Help");
+    panel.add(tabPanel);
   }
 
+  /**
+   * Creates a text box and sets its text
+   * @param textToSet
+   *        Text to set as default for the text box
+   * @return
+   *        Returns the new text box
+   */
   private TextBox makeTextBox(String textToSet) {
     final TextBox airlineNameBox = new TextBox();
     airlineNameBox.setText(textToSet);
@@ -179,6 +235,11 @@ public class AirlineGwt implements EntryPoint {
     return airlineNameBox;
   }
 
+  /**
+   * Creates a list box for the hours of the flight time
+   * @return
+   *        Returns the new list box
+   */
   private ListBox makeHourBox() {
     ListBox hourBox = new ListBox();
     for (int i = 1; i <= 12; ++i) {
@@ -188,6 +249,11 @@ public class AirlineGwt implements EntryPoint {
     return hourBox;
   }
 
+  /**
+   * Creates a list box for AM/PM distinction of the flight time
+   * @return
+   *        Returns the new list box
+   */
   private ListBox makeAmPmBox() {
     ListBox amPmBox = new ListBox();
     amPmBox.addItem("am");
@@ -196,6 +262,11 @@ public class AirlineGwt implements EntryPoint {
     return amPmBox;
   }
 
+  /**
+   * Creates a list box for minutes of the flight time
+   * @return
+   *        Returns the new list box
+   */
   private ListBox makeMinuteBox() {
     ListBox minuteBox = new ListBox();
     for (int i = 0; i <= 59; ++i) {
@@ -209,7 +280,13 @@ public class AirlineGwt implements EntryPoint {
     return minuteBox;
   }
 
-  private void showAirline() {
+  /**
+   * Retrieves <code>Flight</code> data for the airline and calls the <code>PrettyPrinter</code> to display it
+   * in the appropriate text area.
+   * @param airlineInfo
+   *        Text area in which to display the airline info
+   */
+  private void showAirline(final TextArea airlineInfo) {
     logger.info("Calling getAirline");
     airlineService.getAirline(new AsyncCallback<Airline>() {
 
@@ -221,11 +298,16 @@ public class AirlineGwt implements EntryPoint {
       @Override
       public void onSuccess(Airline airline) {
         PrettyPrinter pretty = new PrettyPrinter();
-        alerter.alert(pretty.httpDump(airline, null, null));
+        airlineInfo.setText(pretty.httpDump(airline, null, null));
       }
     });
   }
 
+  /**
+   * Adds an <code>Airline</code> to the server if one does not already exist.  Alerts the user with an error otherwise.
+   * @param airlineName
+   *        Name of the airline to add to the server
+   */
   private void addAirline(String airlineName) {
     logger.info("Adding airline");
     airlineService.addAirlineToServer(airlineName, new AsyncCallback<Void>() {
@@ -242,6 +324,20 @@ public class AirlineGwt implements EntryPoint {
     });
   }
 
+  /**
+   * Adds a <code>Flight</code> to the server.  Does not add the <code>Flight</code> if an identical one exists
+   * or if there is no airline in the server.
+   * @param flightNumber
+   *        Number of new flight
+   * @param source
+   *        Source airport code of new flight
+   * @param departDateTime
+   *        Departure date and time of new flight
+   * @param dest
+   *        Destination airport code of new flight
+   * @param arriveDateTime
+   *        Arrival date and time of new flight
+   */
   private void addFlight(int flightNumber, String source, String departDateTime, String dest, String arriveDateTime) {
     logger.info("Adding flight");
     airlineService.addFlightToServer(
@@ -258,7 +354,16 @@ public class AirlineGwt implements EntryPoint {
             });
   }
 
-  private void searchForFlights(String sourceIn, String destinationIn) {
+  /**
+   * Searches for flights from specified airports and reports results to the appropriate text area
+   * @param searchInfo
+   *        Text area to report results of the search
+   * @param sourceIn
+   *        Airport code of the source of the flight
+   * @param destinationIn
+   *        Airport code of the destination of the flight
+   */
+  private void searchForFlights(final TextArea searchInfo, String sourceIn, String destinationIn) {
     final String source = sourceIn;
     final String destination = destinationIn;
 
@@ -272,7 +377,7 @@ public class AirlineGwt implements EntryPoint {
       @Override
       public void onSuccess(Airline airline) {
         PrettyPrinter pretty = new PrettyPrinter();
-        alerter.alert(pretty.httpDump(airline, source, destination));
+        searchInfo.setText(pretty.httpDump(airline, source, destination));
       }
     });
   }

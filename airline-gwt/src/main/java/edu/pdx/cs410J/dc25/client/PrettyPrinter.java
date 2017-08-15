@@ -4,7 +4,6 @@ import com.google.gwt.i18n.shared.DateTimeFormat;
 import edu.pdx.cs410J.AbstractAirline;
 import edu.pdx.cs410J.AirportNames;
 
-import java.text.DateFormat;
 import java.util.Arrays;
 
 /**
@@ -28,7 +27,9 @@ class PrettyPrinter {
    * @return Returns pretty printed flights for given airline
    */
   String httpDump(AbstractAirline abstractAirline, String source, String destination) {
-    if (abstractAirline.getFlights() == null) {
+    if (abstractAirline.getFlights() == null && source == null) {
+      return "Airline " + abstractAirline.getName() + " does not have any flights";
+    } else if (abstractAirline.getFlights() == null) {
       return "There are no flights that match the search criteria.";
     } else {
       Flight[] flightArray =

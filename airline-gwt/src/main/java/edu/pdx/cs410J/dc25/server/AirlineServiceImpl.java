@@ -16,17 +16,29 @@ public class AirlineServiceImpl extends RemoteServiceServlet implements AirlineS
 {
   private Airline airline = null;
 
+  /**
+   * Getter for the <code>Airline</code> on the server
+   * @return
+   *        Returns the <code>Airline</code> from the server
+   * @throws Exception
+   *        Throws exception if the server doesn't have an airline
+   */
   @Override
   public Airline getAirline() throws Exception {
     if (this.airline == null) {
       throw new Exception("There is no airline on the server");
-    } else if (this.airline.getFlights() == null) {
-      throw new Exception("Airline " + this.airline.getName() + " does not have any flights");
     } else {
       return this.airline;
     }
   }
 
+  /**
+   * Adds an <code>Airline</code> to the server
+   * @param airlineName
+   *        Name of the <code>Airline</code> to create
+   * @throws Exception
+   *        Throws exception if there is an airline already on the server
+   */
   @Override
   public void addAirlineToServer(String airlineName) throws Exception {
     if (airlineName.length() == 0) {
@@ -38,6 +50,22 @@ public class AirlineServiceImpl extends RemoteServiceServlet implements AirlineS
     }
   }
 
+  /**
+   * Creates a <code>Flight</code> from the parameters and adds it to the server if
+   * an identical one doesn't already exist
+   * @param flightNumber
+   *        Number of the flight to be added
+   * @param source
+   *        Source airport code of the flight to be added
+   * @param departDateTime
+   *        Date and time of departure of flight to be added
+   * @param dest
+   *        Destination airport code of the flight to be added
+   * @param arriveDateTime
+   *        Date and time of arrival of flight to be added
+   * @throws Exception
+   *        Throws exception if the server doesn't have an airline
+   */
   @Override
   public void addFlightToServer(int flightNumber, String source, String departDateTime,
                                 String dest, String arriveDateTime) throws Exception {
@@ -51,6 +79,13 @@ public class AirlineServiceImpl extends RemoteServiceServlet implements AirlineS
     }
   }
 
+  /**
+   * Parses the date and time string that is passed in with a <code>Flight</code> to be added
+   * @param toParse
+   *        Date and time string to parse into a date
+   * @return
+   *        Returns date time string as a date
+   */
   private Date parseDateTimeString(String toParse) {
     SimpleDateFormat parseFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm a");
 
